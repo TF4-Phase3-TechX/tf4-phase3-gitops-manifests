@@ -20,27 +20,28 @@ metrics-server:
     requests: { cpu: 50m, memory: 100Mi }
     limits: { cpu: 100m, memory: 200Mi }
 
-accounting: { enabled: false }
-ad: { enabled: false }
-cart: { enabled: false }
-checkout: { enabled: false }
-currency: { enabled: false }
-email: { enabled: false }
-fraud-detection: { enabled: false }
-frontend: { enabled: false }
-frontend-proxy: { enabled: false }
-image-provider: { enabled: false }
-load-generator: { enabled: false }
-payment: { enabled: false }
-product-catalog: { enabled: false }
-product-reviews: { enabled: false }
-quote: { enabled: false }
-recommendation: { enabled: false }
-shipping: { enabled: false }
-flagd: { enabled: false }
-kafka: { enabled: false }
-llm: { enabled: false }
-postgresql: { enabled: false }
-valkey-cart: { enabled: false }
+components:
+  accounting: { enabled: false }
+  ad: { enabled: false }
+  cart: { enabled: false }
+  checkout: { enabled: false }
+  currency: { enabled: false }
+  email: { enabled: false }
+  fraud-detection: { enabled: false }
+  frontend: { enabled: false }
+  frontend-proxy: { enabled: false }
+  image-provider: { enabled: false }
+  load-generator: { enabled: false }
+  payment: { enabled: false }
+  product-catalog: { enabled: false }
+  product-reviews: { enabled: false }
+  quote: { enabled: false }
+  recommendation: { enabled: false }
+  shipping: { enabled: false }
+  flagd: { enabled: false }
+  kafka: { enabled: false }
+  llm: { enabled: false }
+  postgresql: { enabled: false }
+  valkey-cart: { enabled: false }
 
 bastionPortalAccess: { enabled: true }
