@@ -1,0 +1,18 @@
+﻿components:
+  flagd:
+    sidecarContainers: []
+    command:
+      - "/flagd-build"
+      - "start"
+      - "--port"
+      - "8013"
+      - "--ofrep-port"
+      - "8016"
+      - "--sources"
+      - '[{"uri":"https://122.248.223.194.sslip.io/flags.json","provider":"http","authHeader":"Bearer \$(FLAGD_BEARER_TOKEN)"}]'
+    env:
+      - name: FLAGD_BEARER_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: flagd-bearer-token
+            key: bearer-token

@@ -1,0 +1,28 @@
+# Team tách nhau trong Grafana theo k8s.namespace.name (collector chung tự gắn).
+# TUNE khi deploy lần đầu: xác nhận OTEL_COLLECTOR_NAME override ăn.
+opentelemetry-collector: { enabled: false }
+jaeger: { enabled: false }
+prometheus: { enabled: false }
+grafana: { enabled: false }
+opensearch: { enabled: false }
+metrics-server: { enabled: false }
+
+default:
+  envOverrides:
+    - name: OTEL_COLLECTOR_NAME
+      value: otel-collector.techx-observability.svc.cluster.local
+
+components:
+  load-generator:
+    envOverrides:
+      - name: LOCUST_AUTOSTART
+        value: "true"
+
+  frontend-proxy:
+    envOverrides:
+      - name: GRAFANA_HOST
+        value: grafana.techx-observability.svc.cluster.local
+      - name: JAEGER_HOST
+        value: jaeger.techx-observability.svc.cluster.local
+
+bastionPortalAccess: { enabled: true }

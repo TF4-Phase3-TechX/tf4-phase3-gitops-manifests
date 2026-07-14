@@ -1,0 +1,27 @@
+﻿apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: techx-production
+  namespace: argo-cd
+spec:
+  description: "Production AppProject for TechX Webstore Platform"
+  sourceRepos:
+    - 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
+    - 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+  destinations:
+    - namespace: techx-tf4
+      server: https://kubernetes.default.svc
+    - namespace: techx-observability
+      server: https://kubernetes.default.svc
+    - namespace: external-secrets
+      server: https://kubernetes.default.svc
+    - namespace: argo-cd
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: "external-secrets.io"
+      kind: "ClusterSecretStore"
+    - group: "argoproj.io"
+      kind: "AppProject"
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

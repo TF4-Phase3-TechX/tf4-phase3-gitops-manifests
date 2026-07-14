@@ -1,0 +1,52 @@
+﻿components:
+  accounting:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-accounting"
+  ad:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-ad"
+  cart:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-cart"
+  checkout:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-checkout"
+  currency:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-currency"
+  email:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-email"
+  fraud-detection:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-fraud-detection"
+  frontend:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-frontend"
+  frontend-proxy:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-frontend-proxy"
+  image-provider:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-image-provider"
+  load-generator:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-load-generator"
+  payment:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-payment"
+  product-catalog:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-product-catalog"
+  product-reviews:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-product-reviews"
+  quote:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-quote"
+  recommendation:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-recommendation"
+  shipping:
+    imageOverride:
+      tag: "REPLACE_WITH_LIVE_SHORT_SHA-shipping"

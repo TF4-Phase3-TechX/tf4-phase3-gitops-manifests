@@ -1,0 +1,18 @@
+﻿apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-bootstrap
+  namespace: argo-cd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    targetRevision: HEAD
+    path: argocd/root-resources
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo-cd
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false

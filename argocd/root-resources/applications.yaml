@@ -1,0 +1,124 @@
+﻿apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-secrets
+  namespace: argo-cd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://charts.external-secrets.io'
+    chart: external-secrets
+    targetRevision: 0.9.20
+    helm:
+      values: |
+        installCRDs: true
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: external-secrets
+  syncPolicy:
+    automated: null
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-secrets
+  namespace: argo-cd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    targetRevision: HEAD
+    path: platform/secrets
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: techx-tf4
+  syncPolicy:
+    automated: null
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: techx-raw
+  namespace: argo-cd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    targetRevision: HEAD
+    path: environments/production/raw
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: techx-tf4
+  syncPolicy:
+    automated: null
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: techx-observability
+  namespace: argo-cd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: techx-production
+  sources:
+    - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
+      targetRevision: "REPLACE_WITH_YOUR_IMMUTABLE_SOURCE_COMMIT_SHA"
+      ref: chart-source
+    - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+      targetRevision: HEAD
+      ref: values-source
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: techx-observability
+  helm:
+    releaseName: techx-observability
+    valueFiles:
+      - '$values-source/environments/production/observability-values.yaml'
+      - '$values-source/environments/production/alertmanager-routing-values.yaml'
+      - '$values-source/environments/production/flagd-values.yaml'
+  syncPolicy:
+    automated: null
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: techx-corp
+  namespace: argo-cd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: techx-production
+  sources:
+    - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
+      targetRevision: "REPLACE_WITH_YOUR_IMMUTABLE_SOURCE_COMMIT_SHA"
+      ref: chart-source
+    - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+      targetRevision: HEAD
+      ref: values-source
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: techx-tf4
+  helm:
+    releaseName: techx-corp
+    valueFiles:
+      - '$values-source/environments/production/app-values.yaml'
+      - '$values-source/environments/production/flagd-values.yaml'
+      - '$values-source/environments/production/image-revisions.yaml'
+  syncPolicy:
+    automated: null
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
