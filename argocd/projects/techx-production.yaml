@@ -23,6 +23,12 @@ spec:
       kind: "ClusterSecretStore"
     - group: "argoproj.io"
       kind: "AppProject"
+    - group: "apiextensions.k8s.io"
+      kind: "CustomResourceDefinition"
+    - group: "rbac.authorization.k8s.io"
+      kind: "ClusterRole"
+    - group: "rbac.authorization.k8s.io"
+      kind: "ClusterRoleBinding"
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
