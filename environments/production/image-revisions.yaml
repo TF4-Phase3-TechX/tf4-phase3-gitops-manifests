@@ -29,6 +29,12 @@ components:
   image-provider:
     imageOverride:
       tag: "8340af1-image-provider"
+  kafka:
+    imageOverride:
+      tag: "8340af1-kafka"
+  llm:
+    imageOverride:
+      tag: "8340af1-llm"
   load-generator:
     imageOverride:
       tag: "8340af1-load-generator"
@@ -50,3 +56,4 @@ components:
   shipping:
     imageOverride:
       tag: "8340af1-shipping"
+
