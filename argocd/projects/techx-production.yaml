@@ -8,6 +8,7 @@ spec:
   sourceRepos:
     - 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
     - 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    - 'https://charts.external-secrets.io'
   destinations:
     - namespace: techx-tf4
       server: https://kubernetes.default.svc
