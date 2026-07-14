@@ -29,6 +29,10 @@ spec:
       kind: "ClusterRole"
     - group: "rbac.authorization.k8s.io"
       kind: "ClusterRoleBinding"
+    - group: "admissionregistration.k8s.io"
+      kind: "ValidatingWebhookConfiguration"
+    - group: "admissionregistration.k8s.io"
+      kind: "MutatingWebhookConfiguration"
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
