@@ -1,8 +1,8 @@
-﻿apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: external-secrets
-  namespace: argo-cd
+  namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
 spec:
@@ -25,7 +25,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: platform-secrets
-  namespace: argo-cd
+  namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
@@ -45,7 +45,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: techx-raw
-  namespace: argo-cd
+  namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
@@ -65,14 +65,14 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: techx-observability
-  namespace: argo-cd
+  namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: "REPLACE_WITH_YOUR_IMMUTABLE_SOURCE_COMMIT_SHA"
+      targetRevision: 100d926b1271d3f41bbffb91f18d48d6216a6dd3
       ref: chart-source
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
       targetRevision: HEAD
@@ -94,14 +94,14 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: techx-corp
-  namespace: argo-cd
+  namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: "REPLACE_WITH_YOUR_IMMUTABLE_SOURCE_COMMIT_SHA"
+      targetRevision: 100d926b1271d3f41bbffb91f18d48d6216a6dd3
       ref: chart-source
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
       targetRevision: HEAD

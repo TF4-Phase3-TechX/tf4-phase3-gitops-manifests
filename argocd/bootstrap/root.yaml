@@ -1,8 +1,8 @@
-﻿apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: root-bootstrap
-  namespace: argo-cd
+  namespace: argocd
 spec:
   project: default
   source:
@@ -11,7 +11,7 @@ spec:
     path: argocd/root-resources
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: argo-cd
+    namespace: argocd
   syncPolicy:
     automated:
       prune: false

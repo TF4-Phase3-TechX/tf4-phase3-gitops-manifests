@@ -1,8 +1,8 @@
-﻿apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: techx-production
-  namespace: argo-cd
+  namespace: argocd
 spec:
   description: "Production AppProject for TechX Webstore Platform"
   sourceRepos:
@@ -15,7 +15,7 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: external-secrets
       server: https://kubernetes.default.svc
-    - namespace: argo-cd
+    - namespace: argocd
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: "external-secrets.io"
