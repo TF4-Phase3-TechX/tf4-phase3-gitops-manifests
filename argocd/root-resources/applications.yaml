@@ -18,7 +18,9 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: external-secrets
   syncPolicy:
-    automated: null
+    automated:
+      prune: false
+      selfHeal: true
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -38,7 +40,9 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: techx-tf4
   syncPolicy:
-    automated: null
+    automated:
+      prune: false
+      selfHeal: true
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -58,7 +62,9 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: techx-tf4
   syncPolicy:
-    automated: null
+    automated:
+      prune: false
+      selfHeal: true
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -87,7 +93,9 @@ spec:
       - '$values-source/environments/production/alertmanager-routing-values.yaml'
       - '$values-source/environments/production/flagd-values.yaml'
   syncPolicy:
-    automated: null
+    automated:
+      prune: false
+      selfHeal: true
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -116,7 +124,9 @@ spec:
       - '$values-source/environments/production/flagd-values.yaml'
       - '$values-source/environments/production/image-revisions.yaml'
   syncPolicy:
-    automated: null
+    automated:
+      prune: false
+      selfHeal: true
   ignoreDifferences:
     - group: apps
       kind: Deployment
