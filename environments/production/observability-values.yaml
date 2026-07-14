@@ -1,7 +1,16 @@
 # Observability dùng chung: bật 5 subchart, tắt TẤT CẢ app component.
 opentelemetry-collector: { enabled: true }
 jaeger: { enabled: true }
-prometheus: { enabled: true }
+prometheus:
+  enabled: true
+  server:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
 grafana: { enabled: true }
 opensearch: { enabled: true }
 metrics-server:
