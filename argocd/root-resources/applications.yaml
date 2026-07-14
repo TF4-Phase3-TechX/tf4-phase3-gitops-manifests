@@ -81,18 +81,18 @@ spec:
       targetRevision: 100d926b1271d3f41bbffb91f18d48d6216a6dd3
       path: techx-corp-chart
       ref: chart-source
+      helm:
+        releaseName: techx-observability
+        valueFiles:
+          - '$values-source/environments/production/observability-values.yaml'
+          - '$values-source/environments/production/alertmanager-routing-values.yaml'
+          - '$values-source/environments/production/flagd-values.yaml'
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
       targetRevision: HEAD
       ref: values-source
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: techx-observability
-  helm:
-    releaseName: techx-observability
-    valueFiles:
-      - '$values-source/environments/production/observability-values.yaml'
-      - '$values-source/environments/production/alertmanager-routing-values.yaml'
-      - '$values-source/environments/production/flagd-values.yaml'
   syncPolicy:
     automated:
       prune: false
@@ -113,18 +113,18 @@ spec:
       targetRevision: 100d926b1271d3f41bbffb91f18d48d6216a6dd3
       path: techx-corp-chart
       ref: chart-source
+      helm:
+        releaseName: techx-corp
+        valueFiles:
+          - '$values-source/environments/production/app-values.yaml'
+          - '$values-source/environments/production/flagd-values.yaml'
+          - '$values-source/environments/production/image-revisions.yaml'
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
       targetRevision: HEAD
       ref: values-source
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: techx-tf4
-  helm:
-    releaseName: techx-corp
-    valueFiles:
-      - '$values-source/environments/production/app-values.yaml'
-      - '$values-source/environments/production/flagd-values.yaml'
-      - '$values-source/environments/production/image-revisions.yaml'
   syncPolicy:
     automated:
       prune: false

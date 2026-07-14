@@ -1,5 +1,7 @@
 # Team tách nhau trong Grafana theo k8s.namespace.name (collector chung tự gắn).
 # TUNE khi deploy lần đầu: xác nhận OTEL_COLLECTOR_NAME override ăn.
+
+# Disable dependency sub-charts (root-level per chart schema)
 opentelemetry-collector: { enabled: false }
 jaeger: { enabled: false }
 prometheus: { enabled: false }
