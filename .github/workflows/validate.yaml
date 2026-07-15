@@ -8,10 +8,11 @@ jobs:
     steps:
       - name: Checkout Config Repo
         uses: actions/checkout@v4
-      - name: Checkout Source Repo (Helm Chart)
+      - name: Checkout pinned source chart
         uses: actions/checkout@v4
         with:
           repository: TF4-Phase3-TechX/tf4-phase3-repo
+          ref: 1b03bfe0b6316ffa15dd58486752920f4b295db1
           path: source-repo
       - name: Set up Helm
         uses: azure/setup-helm@v4
