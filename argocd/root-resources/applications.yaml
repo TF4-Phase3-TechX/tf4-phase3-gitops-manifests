@@ -93,6 +93,9 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: techx-observability
   syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
     syncOptions:
       - FailOnSharedResource=true
       - ApplyOutOfSyncOnly=true
@@ -125,6 +128,9 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: techx-tf4
   syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
     syncOptions:
       - FailOnSharedResource=true
       - ApplyOutOfSyncOnly=true
