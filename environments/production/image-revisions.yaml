@@ -1,7 +1,7 @@
 components:
   accounting:
     imageOverride:
-      tag: "8340af1-accounting"
+      tag: "4526141-accounting"
   ad:
     imageOverride:
       tag: "8340af1-ad"
