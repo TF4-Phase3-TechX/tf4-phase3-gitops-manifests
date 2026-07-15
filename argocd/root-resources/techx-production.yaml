@@ -18,6 +18,8 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: argocd
       server: https://kubernetes.default.svc
+  orphanedResources:
+    warn: true
   clusterResourceWhitelist:
     - group: "external-secrets.io"
       kind: "ClusterSecretStore"
@@ -34,5 +36,37 @@ spec:
     - group: "admissionregistration.k8s.io"
       kind: "MutatingWebhookConfiguration"
   namespaceResourceWhitelist:
-    - group: "*"
-      kind: "*"
+    - group: ""
+      kind: "ConfigMap"
+    - group: ""
+      kind: "PersistentVolumeClaim"
+    - group: ""
+      kind: "Secret"
+    - group: ""
+      kind: "Service"
+    - group: ""
+      kind: "ServiceAccount"
+    - group: "apps"
+      kind: "DaemonSet"
+    - group: "apps"
+      kind: "Deployment"
+    - group: "apps"
+      kind: "StatefulSet"
+    - group: "autoscaling"
+      kind: "HorizontalPodAutoscaler"
+    - group: "batch"
+      kind: "CronJob"
+    - group: "external-secrets.io"
+      kind: "ExternalSecret"
+    - group: "policy"
+      kind: "PodDisruptionBudget"
+    - group: "rbac.authorization.k8s.io"
+      kind: "Role"
+    - group: "rbac.authorization.k8s.io"
+      kind: "RoleBinding"
+    - group: "networking.k8s.io"
+      kind: "Ingress"
+    - group: "apiregistration.k8s.io"
+      kind: "APIService"
+    - group: "argoproj.io"
+      kind: "Application"

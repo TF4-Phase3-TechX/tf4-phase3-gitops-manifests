@@ -8,25 +8,47 @@ jobs:
     steps:
       - name: Checkout Config Repo
         uses: actions/checkout@v4
-      - name: Checkout pinned source chart
+        with:
+          fetch-depth: 0
+      - name: Install validation dependencies
+        run: pip install PyYAML
+      - name: Validate GitOps manifests
+        run: python scripts/validate.py
+      - name: Read deployed chart revision
+        id: chart
+        run: |
+          revision="$(python - <<'PY'
+          import yaml
+          for app in yaml.safe_load_all(open('argocd/root-resources/applications.yaml')):
+              for source in app.get('spec', {}).get('sources', []):
+                  if source.get('repoURL') == 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git':
+                      print(source['targetRevision'])
+                      raise SystemExit
+          raise SystemExit('source chart revision not found')
+          PY
+          )"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+      - name: Checkout deployed source chart
         uses: actions/checkout@v4
         with:
           repository: TF4-Phase3-TechX/tf4-phase3-repo
-          ref: 1b03bfe0b6316ffa15dd58486752920f4b295db1
+          ref: ${{ steps.chart.outputs.revision }}
           path: source-repo
       - name: Set up Helm
         uses: azure/setup-helm@v4
         with:
           version: v3.14.0
-      - name: Dry-run and Template rendering validation
+      - name: Lint and render releases
         run: |
+          helm lint ./source-repo/techx-corp-chart \
+            -f environments/production/app-values.yaml \
+            -f environments/production/flagd-values.yaml \
+            -f environments/production/image-revisions.yaml
           helm template techx-corp ./source-repo/techx-corp-chart \
             -f environments/production/app-values.yaml \
             -f environments/production/flagd-values.yaml \
             -f environments/production/image-revisions.yaml > /dev/null
-          
           helm template techx-observability ./source-repo/techx-corp-chart \
             -f environments/production/observability-values.yaml \
-            -f environments/production/alertmanager-routing-values.yaml \
-            -f environments/production/flagd-values.yaml > /dev/null
+            -f environments/production/alertmanager-routing-values.yaml > /dev/null
           echo "Validation completed successfully!"

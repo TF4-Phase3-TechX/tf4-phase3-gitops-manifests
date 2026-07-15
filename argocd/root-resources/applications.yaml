@@ -34,7 +34,7 @@ spec:
   project: techx-production
   source:
     repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
-    targetRevision: HEAD
+    targetRevision: main
     path: platform/secrets
   destination:
     server: 'https://kubernetes.default.svc'
@@ -56,7 +56,7 @@ spec:
   project: techx-production
   source:
     repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
-    targetRevision: HEAD
+    targetRevision: main
     path: environments/production/raw
   destination:
     server: 'https://kubernetes.default.svc'
