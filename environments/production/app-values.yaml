@@ -29,6 +29,12 @@ components:
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
+    # Temporary no-downtime canary stage: namespace CPU quota has only 200m
+    # headroom while the previous 300m pod is still serving. Restore 300m
+    # immediately after the Bedrock pod becomes Ready and the old pod exits.
+    resources:
+      requests: { cpu: 75m, memory: 96Mi }
+      limits: { cpu: 200m, memory: 192Mi }
     envOverrides:
       - name: AWS_REGION
         value: us-east-1
