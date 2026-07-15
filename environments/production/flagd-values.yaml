@@ -9,7 +9,7 @@
       - "--ofrep-port"
       - "8016"
       - "--sources"
-      - '[{"uri":"https://122.248.223.194.sslip.io/flags.json","provider":"http","authHeader":"Bearer \$(FLAGD_BEARER_TOKEN)"}]'
+      - '[{"uri":"https://122.248.223.194.sslip.io/flags.json","provider":"http","authHeader":"Bearer $(FLAGD_BEARER_TOKEN)"}]'
     env:
       - name: FLAGD_BEARER_TOKEN
         valueFrom:
