@@ -27,4 +27,41 @@ components:
       - name: JAEGER_HOST
         value: jaeger.techx-observability.svc.cluster.local
 
+  product-reviews:
+    serviceAccountName: product-reviews-bedrock
+    envOverrides:
+      - name: AWS_REGION
+        value: us-east-1
+      - name: BEDROCK_MODEL_ID
+        value: us.amazon.nova-2-lite-v1:0
+      - name: BEDROCK_GUARDRAIL_ID
+        value: wckqh9dms6qa
+      - name: BEDROCK_GUARDRAIL_VERSION
+        value: "1"
+      - name: BEDROCK_OUTPUT_MODE
+        value: tool
+      - name: BEDROCK_DEADLINE_SECONDS
+        value: "4.5"
+      - name: BEDROCK_INPUT_USD_PER_MILLION
+        value: "0.30"
+      - name: BEDROCK_OUTPUT_USD_PER_MILLION
+        value: "2.50"
+      - name: BEDROCK_SYSTEM_CANARY
+        valueFrom:
+          secretKeyRef:
+            name: product-reviews-bedrock-canary
+            key: marker
+      - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+        value: "false"
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 10001
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+
 bastionPortalAccess: { enabled: true }
