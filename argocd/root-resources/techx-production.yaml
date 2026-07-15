@@ -22,6 +22,11 @@ spec:
       server: https://kubernetes.default.svc
   orphanedResources:
     warn: true
+    ignore:
+      - kind: Secret
+        name: sh.helm.release.v1.techx-corp.v*
+      - kind: Secret
+        name: sh.helm.release.v1.techx-observability.v*
   clusterResourceWhitelist:
     - group: "external-secrets.io"
       kind: "ClusterSecretStore"
