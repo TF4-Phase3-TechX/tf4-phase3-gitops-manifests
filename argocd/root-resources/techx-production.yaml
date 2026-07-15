@@ -45,6 +45,8 @@ spec:
     - group: ""
       kind: "PersistentVolumeClaim"
     - group: ""
+      kind: "ResourceQuota"
+    - group: ""
       kind: "Secret"
     - group: ""
       kind: "Service"
