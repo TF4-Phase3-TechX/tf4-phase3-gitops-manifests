@@ -18,3 +18,7 @@ prometheus:
           smarthost: 'smtp.mailtrap.io:2525'
           auth_username: 'api'
           auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+        slack_configs:
+        - api_url_file: /etc/alertmanager/slack/webhook-url
+          send_resolved: true
+
