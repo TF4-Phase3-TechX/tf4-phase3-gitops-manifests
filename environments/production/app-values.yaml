@@ -18,9 +18,7 @@ components:
   load-generator:
     envOverrides:
       - name: LOCUST_AUTOSTART
-        value: "false"
-      - name: LOCUST_USERS
-        value: "0"
+        value: "true"
 
   frontend-proxy:
     envOverrides:
