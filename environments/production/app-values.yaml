@@ -29,6 +29,14 @@ components:
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
+    readinessProbe:
+      grpc:
+        port: 3551
+      initialDelaySeconds: 2
+      periodSeconds: 2
+      timeoutSeconds: 1
+      failureThreshold: 30
+      successThreshold: 1
     envOverrides:
       - name: AWS_REGION
         value: us-east-1
