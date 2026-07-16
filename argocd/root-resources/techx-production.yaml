@@ -48,6 +48,8 @@ spec:
       kind: "ValidatingAdmissionPolicyBinding"
     - group: ""
       kind: "Namespace"
+    - group: "storage.k8s.io"
+      kind: "StorageClass"
     - group: "apiregistration.k8s.io"
       kind: "APIService"
   namespaceResourceWhitelist:
