@@ -1,0 +1,24 @@
+# Labels the production namespaces that runtime-hardening.yaml's bindings select
+# on (namespaceSelector: techx.io/policy-scope=enforced). GitOps-managed and
+# selfHeal'd: if the label is ever removed out-of-band, ArgoCD reapplies it
+# automatically — no manual bootstrap step needed.
+#
+# Only metadata (name + one label) is specified, so this adopts the existing
+# namespace without touching any of its other fields.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: techx-tf4
+  labels:
+    techx.io/policy-scope: enforced
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: techx-observability
+  labels:
+    techx.io/policy-scope: enforced
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"

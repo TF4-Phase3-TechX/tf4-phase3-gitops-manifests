@@ -1,0 +1,168 @@
+# Runtime hardening admission policies (policy-as-code).
+#
+# Cluster-scoped ValidatingAdmissionPolicy + bindings that enforce baseline pod
+# security at admission time: run-as-non-root, no mutable/untagged images,
+# required cpu+memory requests/limits, and drop-all capabilities.
+#
+# GitOps-managed (ArgoCD Application "platform-admission", selfHeal: true) —
+# merging a change to this file applies it to the cluster automatically within
+# one sync interval. There is no separate manual apply step; a git revert (or
+# editing validationActions back to [Audit, Warn]) is the rollback path.
+#
+# Scope: production only, via namespaceSelector below — matches only namespaces
+# labelled techx.io/policy-scope=enforced (see namespaces.yaml in this same
+# directory, applied first via sync-wave "-1"). No other namespace is targeted.
+#
+# KNOWN RISK at time of writing: run-as-nonroot and drop-all-capabilities still
+# have live violations on some workloads (rollout of the underlying fix is in
+# progress) — those workloads will fail to (re)deploy until fixed. This was a
+# deliberate decision, not an oversight — see CDO08-SEC-11 plan for detail.
+
+# ── Policy: run as non-root ─────────────────────────────────────────────────
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: require-run-as-nonroot
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  validations:
+  # Effective runAsNonRoot: container-level overrides pod-level (matches Kubernetes
+  # semantics), so a pod that sets runAsNonRoot only at pod level is not rejected.
+  - expression: >
+      (object.spec.containers + object.spec.?initContainers.orValue([])).all(c,
+        c.?securityContext.?runAsNonRoot.orValue(
+          object.spec.?securityContext.?runAsNonRoot.orValue(false)) == true)
+    message: "Container/initContainer must run as non-root: set runAsNonRoot=true at pod or container level."
+---
+# ── Policy: disallow mutable / untagged image ───────────────────────────────
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: disallow-mutable-image-tag
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  validations:
+  # A bare `contains(':')` check is wrong when the registry host has a port, e.g.
+  # "registry.local:5000/team/app" contains ':' but has no tag. The regex anchors the
+  # tag/digest to the LAST path segment: (.*/)? greedily consumes everything up to and
+  # including the last '/', so any ':' from a registry port is absorbed into that
+  # optional prefix and never counted as a tag separator.
+  - expression: >
+      (object.spec.containers + object.spec.?initContainers.orValue([])).all(c,
+        c.image.matches('^(.*/)?[^/:@]+(:[A-Za-z0-9_.-]+|@sha256:[0-9a-f]{64})$') &&
+        !c.image.endsWith(':latest'))
+    message: "Image must pin a fixed tag or digest (repo:tag or repo@sha256:<digest>); ':latest', untagged images, and untagged images behind a registry:port are not allowed."
+---
+# ── Policy: require resource requests and limits ────────────────────────────
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: require-resource-limits
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  validations:
+  - expression: >
+      (object.spec.containers + object.spec.?initContainers.orValue([])).all(c,
+        has(c.resources) &&
+        has(c.resources.requests) && has(c.resources.requests.cpu) && has(c.resources.requests.memory) &&
+        has(c.resources.limits) && has(c.resources.limits.cpu) && has(c.resources.limits.memory))
+    message: "Container/initContainer must define both requests and limits for cpu and memory."
+---
+# ── Policy: drop all capabilities ───────────────────────────────────────────
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: require-drop-all-capabilities
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  validations:
+  # Drop ALL then add back only what is required — enforce the drop: [ALL] part only.
+  - expression: >
+      (object.spec.containers + object.spec.?initContainers.orValue([])).all(c,
+        c.?securityContext.?capabilities.?drop.orValue([]).exists(d, d == 'ALL'))
+    message: "Container/initContainer must drop all capabilities: set securityContext.capabilities.drop: [\"ALL\"] (add back only what is required)."
+---
+# ── Production bindings (sync-wave 1: after namespaces + policies exist) ────
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: require-run-as-nonroot-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  policyName: require-run-as-nonroot
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels: { techx.io/policy-scope: enforced }
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: require-drop-all-capabilities-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  policyName: require-drop-all-capabilities
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels: { techx.io/policy-scope: enforced }
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: disallow-mutable-image-tag-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  policyName: disallow-mutable-image-tag
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels: { techx.io/policy-scope: enforced }
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: require-resource-limits-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  policyName: require-resource-limits
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels: { techx.io/policy-scope: enforced }

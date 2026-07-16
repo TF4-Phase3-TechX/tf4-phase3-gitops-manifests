@@ -48,6 +48,28 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: platform-admission
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    targetRevision: main
+    path: platform/admission
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: techx-tf4
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: techx-raw
   namespace: argocd
   annotations:
