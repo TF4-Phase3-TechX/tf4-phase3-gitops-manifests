@@ -43,9 +43,9 @@ components:
       - name: BEDROCK_MODEL_ID
         value: us.amazon.nova-2-lite-v1:0
       - name: BEDROCK_GUARDRAIL_ID
-        value: e2svpiawj1v5
+        value: wckqh9dms6qa
       - name: BEDROCK_GUARDRAIL_VERSION
-        value: "3"
+        value: "1"
       - name: BEDROCK_OUTPUT_MODE
         value: tool
       - name: BEDROCK_DEADLINE_SECONDS
