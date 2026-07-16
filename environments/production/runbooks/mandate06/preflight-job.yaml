@@ -24,7 +24,7 @@ spec:
         - name: preflight
           image: 511825856493.dkr.ecr.us-east-1.amazonaws.com/techx-corp@sha256:b2cd465b868072370a720d56fc29695eef4d3e35e705e454142f6a018cb4bfde
           imagePullPolicy: IfNotPresent
-          command: ["python", "-c"]
+          command: ["/venv/bin/python", "-c"]
           args:
             - |
               import json
