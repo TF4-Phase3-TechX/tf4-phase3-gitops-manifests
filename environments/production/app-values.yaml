@@ -29,15 +29,23 @@ components:
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
+    readinessProbe:
+      grpc:
+        port: 3551
+      initialDelaySeconds: 2
+      periodSeconds: 2
+      timeoutSeconds: 1
+      failureThreshold: 30
+      successThreshold: 1
     envOverrides:
       - name: AWS_REGION
         value: us-east-1
       - name: BEDROCK_MODEL_ID
         value: us.amazon.nova-2-lite-v1:0
       - name: BEDROCK_GUARDRAIL_ID
-        value: wckqh9dms6qa
+        value: e2svpiawj1v5
       - name: BEDROCK_GUARDRAIL_VERSION
-        value: "1"
+        value: "3"
       - name: BEDROCK_OUTPUT_MODE
         value: tool
       - name: BEDROCK_DEADLINE_SECONDS
