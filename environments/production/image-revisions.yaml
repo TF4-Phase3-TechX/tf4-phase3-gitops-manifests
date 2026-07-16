@@ -46,7 +46,7 @@ components:
       tag: "8340af1-product-catalog"
   product-reviews:
     imageOverride:
-      tag: "c16ecbe-product-reviews"
+      tag: "d1c4632-product-reviews"
   quote:
     imageOverride:
       tag: "8340af1-quote"
