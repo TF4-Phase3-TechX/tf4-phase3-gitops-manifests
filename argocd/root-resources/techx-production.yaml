@@ -3,6 +3,13 @@ kind: AppProject
 metadata:
   name: techx-production
   namespace: argocd
+  annotations:
+    # Lower than any child Application's sync-wave (lowest currently in use is
+    # -2, on external-secrets) so whitelist changes always land before a child
+    # Application tries to sync resources of a newly-whitelisted kind — avoids
+    # a transient sync failure on the same PR that both adds a whitelist entry
+    # and a child Application that needs it.
+    argocd.argoproj.io/sync-wave: "-3"
 spec:
   description: "Production AppProject for TechX Webstore Platform"
   sourceRepos:

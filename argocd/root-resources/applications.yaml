@@ -65,6 +65,9 @@ spec:
     automated:
       prune: false
       selfHeal: true
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
 
 ---
 apiVersion: argoproj.io/v1alpha1
