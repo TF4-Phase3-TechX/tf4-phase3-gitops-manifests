@@ -1,21 +1,66 @@
-# Mandate 06 cross-account canary preflight
+# Mandate 06 remediation canary preflight
 
-This directory is not referenced by an Argo CD application and is not automatically applied. CDO08 runs this preflight manually before merging the production values change.
+This directory is not referenced by an Argo CD application and is not
+automatically applied. A CDO owner runs the Job manually inside a named
+CDO/AIO window before the remediation canary promotion is merged.
 
-## Verified impact boundary
+## Release under test
 
-- Base GitOps revision: `8ad1c02eee654f37a41fd1176ff11c93a087f05b`
-- Audited PR head before this runbook was added: `714c87e967a20d77c87d9464244e2c4ee65906db`
-- Source chart revision: `0a3e626e083b597d1ceac65e7d3a175607f204f1`
-- Helm version: `v3.14.0`
-- Base and PR each render 71 resources.
-- Canonical render comparison changes only `apps/v1 Deployment/techx-tf4/product-reviews`.
-- Shared load-generator and all other workloads remain unchanged.
-- The product-reviews values add a native gRPC readiness probe on port `3551`, which the service implements with status `SERVING`.
+- Source commit: `d1c463241d36743fbcdb9ee57028aec96f0b7914`
+- Product-reviews image tag: `d1c4632-product-reviews`
+- Immutable image digest:
+  `sha256:f8a938d6822a1e689dde1f8df01123635dcbd68bea32fa681ff8e439061aaa92`
+- Model: `us.amazon.nova-2-lite-v1:0`
+- Temporary canary account: `589077667575`
+- Guardrail: `e2svpiawj1v5:3`
 
-## Run preflight
+The previous canary was rolled back first. The source-only Pod Identity
+association and Guardrail `wckqh9dms6qa:1` were read back on the healthy
+revision-21 workload before this fresh canary was prepared.
 
-Run only inside the approved CDO/AIO window:
+## Impact boundary
+
+The Argo-managed change is limited to `Deployment/product-reviews`:
+
+- image `c16ecbe-product-reviews` to `d1c4632-product-reviews`; and
+- Guardrail `wckqh9dms6qa:1` to `e2svpiawj1v5:3`.
+
+The Service, load generator, other workloads, Secrets and RBAC are unchanged.
+The preflight manifest itself is a manual runbook artifact and is not applied
+by Argo CD.
+
+## CDO identity gate
+
+Before running the Job, CDO must create the approved cross-account Pod
+Identity association for namespace `techx-tf4`, ServiceAccount
+`product-reviews-bedrock`, source role
+`arn:aws:iam::511825856493:role/tf4-product-reviews-bedrock`, and target role
+`arn:aws:iam::589077667575:role/tf4-product-reviews-bedrock-emergency-target`.
+
+Record the new association ID, source/target role ARNs, `modifiedAt`, named CDO
+owner and UTC start/expiry. Abort if read-back differs from the approved
+identity pair.
+
+## Production-shaped non-routing preflight
+
+The Job imports the shipped `BedrockAdapter` and `validate_grounded_output`
+directly from the exact remediation image, then sends one synthetic request
+with:
+
+- application system prompt plus the existing Secret-backed system canary;
+- guarded grounding source and guarded query;
+- deterministic synthetic product/review context;
+- forced non-action `emit_grounded_answer` tool;
+- Nova-compatible top-level tool schema;
+- `temperature=0`, `maxTokens=512`, zero SDK retries and 4.5-second deadline;
+- pinned Guardrail version 3; and
+- the production PII, canary-leak, schema and exact evidence-quote validator.
+
+It prints only account/role, image/model/Guardrail, response-contract, latency,
+token and citation-count metadata. It never prints the prompt, context, answer,
+evidence quotes, model response, credentials or Secret values.
+
+Run only inside the approved window:
 
 ```bash
 kubectl create -f environments/production/runbooks/mandate06/preflight-job.yaml
@@ -24,15 +69,22 @@ kubectl wait --for=condition=complete --timeout=90s \
 kubectl logs job/product-reviews-bedrock-cross-account-preflight -n techx-tf4
 ```
 
-Expected output contains only metadata:
+Expected metadata includes:
 
 - `result: PASS`
 - account `589077667575`
 - role `tf4-product-reviews-bedrock-emergency-target`
+- the immutable image digest above
 - Guardrail version `3`
-- latency and token counts
+- `stop_reason: tool_use`
+- `contract_stage: tool_input_dict`
+- `decision: answered` with exact evidence for both durability and comfort
+- non-zero token counts and latency no greater than 4500 ms
+- `content_retained: false`
 
-The script intentionally does not print the model response. Abort the rollout if the Job fails, reports another account/role, or emits an IAM, Guardrail, timeout or throttling error.
+Abort if the Job fails, reports another account/role/image/Guardrail, returns a
+different response contract, exceeds the deadline or fails exact-citation
+validation.
 
 Cleanup if the TTL controller has not already removed the Job:
 
@@ -40,12 +92,23 @@ Cleanup if the TTL controller has not already removed the Job:
 kubectl delete job product-reviews-bedrock-cross-account-preflight -n techx-tf4
 ```
 
-## Rollout rule
+## Promotion and rollback gates
 
-Merge is the deployment gate because the Argo application has automated sync and self-heal. Do not merge before platform-owner approval, successful preflight and recorded final GO. The values change itself creates a new ReplicaSet; do not issue a second manual rollout restart unless Argo fails to roll the changed pod template.
+After preflight PASS, the platform/CDO reviewer records final GO, marks the
+canary PR Ready and merges through the protected path. Do not issue a manual
+rollout restart; the pod-template change creates the ReplicaSet.
 
-Rollback must restore both sides coherently:
+AIO1 then runs the supported, unsupported, stored-injection, PII/system-canary,
+action-request and provider-failure probes. Prometheus/OpenSearch/Jaeger must
+show sanitized metadata, non-zero token/cost counters, application p95 below
+the five-second budget and no Storefront SLO regression.
 
-1. Restore Guardrail values to `wckqh9dms6qa:1` through GitOps.
-2. CDO08 removes `targetRoleArn` from the Pod Identity association.
-3. Verify the canonical safe-unavailable behavior while account `511825856493` quotas remain zero.
+Any hard-gate failure triggers coordinated rollback:
+
+1. CDO restores a source-only Pod Identity association and verifies
+   `targetRoleArn=null`.
+2. GitOps restores Guardrail `wckqh9dms6qa:1` and the previous approved image.
+3. Argo/workload readiness and canonical safe-unavailable behavior are read
+   back and the recovery duration is recorded.
+
+There is no real-to-mock fallback.
