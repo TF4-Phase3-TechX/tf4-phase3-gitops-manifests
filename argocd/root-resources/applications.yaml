@@ -95,12 +95,11 @@ spec:
     namespace: techx-observability
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
     syncOptions:
       - FailOnSharedResource=true
       - ApplyOutOfSyncOnly=true
-      - PruneLast=true
 
 ---
 apiVersion: argoproj.io/v1alpha1
