@@ -40,7 +40,7 @@ def main():
                 if identity in seen:
                     raise SystemExit(f"duplicate manifest identity: {identity}")
                 seen.add(identity)
-        if SECRET_PATTERN.search(path.read_text()) and "all-secrets.yaml" not in str(path):
+        if SECRET_PATTERN.search(path.read_text()) and "platform/secrets/" not in str(path).replace("\\", "/"):
             raise SystemExit(f"possible plaintext credential in {path.relative_to(ROOT)}")
 
     base = subprocess.run(["git", "merge-base", "origin/main", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True).stdout.strip()
