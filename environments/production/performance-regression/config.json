@@ -1,0 +1,55 @@
+{
+  "namespace": "techx-tf4",
+  "prometheus_url": "http://127.0.0.1:9090",
+  "load_generator_selector": "app.kubernetes.io/component=load-generator",
+  "surge_deployment": "frontend",
+  "rollout_timeout_seconds": 300,
+  "max_restart_delta": 0,
+  "queries": {
+    "storefront_p95_seconds": {
+      "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_duration_milliseconds_bucket{k8s_namespace_name=\"techx-tf4\"}[5m]))) / 1000",
+      "absolute_max": 1.0,
+      "max_regression_ratio": 1.1
+    },
+    "browse_error_ratio": {
+      "promql": "sum(rate(http_server_requests_total{k8s_namespace_name=\"techx-tf4\",http_route=\"/\",http_response_status_code=~\"5..\"}[5m])) / clamp_min(sum(rate(http_server_requests_total{k8s_namespace_name=\"techx-tf4\",http_route=\"/\"}[5m])), 1e-9)",
+      "max_regression_ratio": 1.1
+    },
+    "cart_error_ratio": {
+      "promql": "sum(rate(http_server_requests_total{k8s_namespace_name=\"techx-tf4\",http_route=~\".*cart.*\",http_response_status_code=~\"5..\"}[5m])) / clamp_min(sum(rate(http_server_requests_total{k8s_namespace_name=\"techx-tf4\",http_route=~\".*cart.*\"}[5m])), 1e-9)",
+      "max_regression_ratio": 1.1
+    },
+    "checkout_error_ratio": {
+      "promql": "sum(rate(http_server_requests_total{k8s_namespace_name=\"techx-tf4\",http_route=~\".*checkout.*\",http_response_status_code=~\"5..\"}[5m])) / clamp_min(sum(rate(http_server_requests_total{k8s_namespace_name=\"techx-tf4\",http_route=~\".*checkout.*\"}[5m])), 1e-9)",
+      "max_regression_ratio": 1.1
+    },
+    "cpu_throttling_ratio": {
+      "promql": "sum(rate(container_cpu_cfs_throttled_periods_total{namespace=\"techx-tf4\",container!=\"\"}[5m])) / clamp_min(sum(rate(container_cpu_cfs_periods_total{namespace=\"techx-tf4\",container!=\"\"}[5m])), 1e-9)",
+      "absolute_max": 0.25,
+      "max_regression_ratio": 1.2
+    },
+    "memory_working_set_ratio": {
+      "promql": "sum(container_memory_working_set_bytes{namespace=\"techx-tf4\",container!=\"\"}) / clamp_min(sum(kube_pod_container_resource_limits{namespace=\"techx-tf4\",resource=\"memory\"}), 1)",
+      "absolute_max": 0.9,
+      "max_regression_ratio": 1.1
+    },
+    "container_restart_increase": {
+      "promql": "sum(increase(kube_pod_container_status_restarts_total{namespace=\"techx-tf4\"}[10m]))",
+      "absolute_max": 0
+    },
+    "oom_killed_increase": {
+      "promql": "sum(increase(kube_pod_container_status_last_terminated_reason{namespace=\"techx-tf4\",reason=\"OOMKilled\"}[10m]))",
+      "absolute_max": 0
+    },
+    "scheduler_requested_cpu_ratio": {
+      "promql": "1 - (sum(kube_node_status_allocatable{resource=\"cpu\"}) - sum(kube_pod_container_resource_requests{resource=\"cpu\"})) / sum(kube_node_status_allocatable{resource=\"cpu\"})",
+      "absolute_max": 0.8,
+      "max_regression_ratio": 1.1
+    },
+    "scheduler_requested_memory_ratio": {
+      "promql": "1 - (sum(kube_node_status_allocatable{resource=\"memory\"}) - sum(kube_pod_container_resource_requests{resource=\"memory\"})) / sum(kube_node_status_allocatable{resource=\"memory\"})",
+      "absolute_max": 0.8,
+      "max_regression_ratio": 1.1
+    }
+  }
+}

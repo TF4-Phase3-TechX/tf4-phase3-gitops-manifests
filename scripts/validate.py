@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import re
 import subprocess
 import sys
@@ -63,6 +64,14 @@ def main():
     expected_observability = {"opentelemetry-collector", "prometheus", "grafana", "opensearch"}
     if set(observability) != expected_observability:
         raise SystemExit("incorrect workload membership in wave-04-observability.yaml")
+
+    perf_config = json.loads((ROOT / "environments/production/performance-regression/config.json").read_text())
+    required_queries = {"storefront_p95_seconds", "browse_error_ratio", "cart_error_ratio",
+                        "checkout_error_ratio", "cpu_throttling_ratio",
+                        "memory_working_set_ratio", "container_restart_increase", "oom_killed_increase",
+                        "scheduler_requested_cpu_ratio", "scheduler_requested_memory_ratio"}
+    if set(perf_config.get("queries", {})) != required_queries:
+        raise SystemExit("D5-PERF-05 query set is incomplete")
 
     base = subprocess.run(["git", "merge-base", "origin/main", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True).stdout.strip()
     changed = subprocess.run(["git", "diff", "--name-status", base, "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True).stdout.splitlines()
