@@ -15,16 +15,16 @@ spec:
       values: |
         installCRDs: true
         resources:
-          requests: { cpu: 25m, memory: 64Mi }
-          limits: { cpu: 200m, memory: 128Mi }
+          requests: { cpu: 5m, memory: 32Mi }
+          limits: { cpu: 50m, memory: 64Mi }
         webhook:
           resources:
-            requests: { cpu: 10m, memory: 32Mi }
-            limits: { cpu: 50m, memory: 64Mi }
+            requests: { cpu: 5m, memory: 32Mi }
+            limits: { cpu: 50m, memory: 48Mi }
         certController:
           resources:
-            requests: { cpu: 10m, memory: 48Mi }
-            limits: { cpu: 50m, memory: 96Mi }
+            requests: { cpu: 5m, memory: 48Mi }
+            limits: { cpu: 50m, memory: 80Mi }
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: external-secrets
