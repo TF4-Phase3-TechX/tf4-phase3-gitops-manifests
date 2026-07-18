@@ -16,12 +16,6 @@ default:
 
 components:
   load-generator:
-    command:
-      - locust
-      - --skip-log-setup
-      - --csv
-      - /tmp/locust
-      - --csv-full-history
     envOverrides:
       - name: LOCUST_AUTOSTART
         value: "true"
