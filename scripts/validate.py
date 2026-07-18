@@ -10,6 +10,12 @@ ROOT = Path(__file__).resolve().parents[1]
 APPLICATIONS = ROOT / "argocd/root-resources/applications.yaml"
 DESTRUCTIVE_KINDS = {"PersistentVolumeClaim", "PersistentVolume", "Service", "Namespace", "CustomResourceDefinition"}
 SECRET_PATTERN = re.compile(r"(?i)(password|token|secret|api[-_]?key)\s*:\s*['\"]?[^${\s][^\n]*")
+EXPECTED_WAVES = {
+    "wave-01-low-risk-stateless.yaml": {"ad", "email", "image-provider", "quote"},
+    "wave-02-revenue-critical-stateless.yaml": {"frontend", "frontend-proxy", "cart", "checkout", "currency", "payment", "product-catalog", "shipping"},
+    "wave-03-stateful-messaging.yaml": {"accounting", "fraud-detection", "kafka", "postgresql", "valkey-cart"},
+    "wave-05-exceptions.yaml": {"flagd", "llm", "load-generator", "product-reviews", "recommendation"},
+}
 
 
 def documents(path):
@@ -42,6 +48,21 @@ def main():
                 seen.add(identity)
         if SECRET_PATTERN.search(path.read_text()) and "all-secrets.yaml" not in str(path):
             raise SystemExit(f"possible plaintext credential in {path.relative_to(ROOT)}")
+
+    rollout = ROOT / "environments/production/resource-rollout"
+    for filename, expected in EXPECTED_WAVES.items():
+        values = yaml.safe_load((rollout / filename).read_text())
+        actual = set(values.get("components", {}))
+        if actual != expected:
+            raise SystemExit(f"incorrect workload membership in {filename}: {sorted(actual)}")
+        for component, config in values["components"].items():
+            resources = config.get("resources", {})
+            if set(resources) != {"requests", "limits"}:
+                raise SystemExit(f"incomplete resources for {component} in {filename}")
+    observability = yaml.safe_load((rollout / "wave-04-observability.yaml").read_text())
+    expected_observability = {"opentelemetry-collector", "prometheus", "grafana", "opensearch"}
+    if set(observability) != expected_observability:
+        raise SystemExit("incorrect workload membership in wave-04-observability.yaml")
 
     base = subprocess.run(["git", "merge-base", "origin/main", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True).stdout.strip()
     changed = subprocess.run(["git", "diff", "--name-status", base, "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True).stdout.splitlines()

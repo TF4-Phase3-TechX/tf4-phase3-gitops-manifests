@@ -1,0 +1,18 @@
+# D5-PERF-03 reviewed resource overrides. Promote only this wave into app-values.yaml.
+components:
+  ad:
+    resources:
+      requests: { cpu: 50m, memory: 150Mi }
+      limits: { cpu: 200m, memory: 300Mi }
+  email:
+    resources:
+      requests: { cpu: 20m, memory: 50Mi }
+      limits: { cpu: 100m, memory: 100Mi }
+  image-provider:
+    resources:
+      requests: { cpu: 10m, memory: 25Mi }
+      limits: { cpu: 50m, memory: 50Mi }
+  quote:
+    resources:
+      requests: { cpu: 10m, memory: 20Mi }
+      limits: { cpu: 50m, memory: 40Mi }
