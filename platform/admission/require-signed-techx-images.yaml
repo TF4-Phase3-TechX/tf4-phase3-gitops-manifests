@@ -1,0 +1,47 @@
+apiVersion: policies.kyverno.io/v1
+kind: ImageValidatingPolicy
+metadata:
+  name: require-signed-techx-images
+  annotations:
+    techx.io/sec17-stage: "test-scope-only"
+    techx.io/sec17-note: "Expand namespaceSelector after image-revisions.yaml has digest entries for production workloads."
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  webhookConfiguration:
+    timeoutSeconds: 15
+  evaluation:
+    background:
+      enabled: false
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        techx.io/sec17-signature-enforce: "true"
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  matchImageReferences:
+    - glob: "511825856493.dkr.ecr.us-east-1.amazonaws.com/techx-corp*"
+  validationConfigurations:
+    mutateDigest: false
+    required: true
+    verifyDigest: true
+  credentials:
+    allowInsecureRegistry: false
+    providers:
+      - amazon
+  attestors:
+    - name: githubActions
+      cosign:
+        keyless:
+          identities:
+            - subjectRegExp: "^https://github\\.com/TF4-Phase3-TechX/tf4-phase3-repo/\\.github/workflows/.*@refs/heads/main$"
+              issuer: "https://token.actions.githubusercontent.com"
+        ctlog:
+          url: "https://rekor.sigstore.dev"
+  validations:
+    - expression: >-
+        images.containers.map(image, verifyImageSignatures(image, [attestors.githubActions])).all(result, result > 0)
+      message: "Image must be signed by the approved TF4 GitHub Actions OIDC identity."
