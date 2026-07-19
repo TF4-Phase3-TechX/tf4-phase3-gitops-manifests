@@ -13,7 +13,7 @@ components:
       tag: "8340af1-checkout"
   currency:
     imageOverride:
-      tag: "8340af1-currency"
+      tag: "411e9a2-currency"
   email:
     imageOverride:
       tag: "8340af1-email"
@@ -22,7 +22,7 @@ components:
       tag: "8340af1-fraud-detection"
   frontend:
     imageOverride:
-      tag: "8340af1-frontend"
+      tag: "411e9a2-frontend"
   frontend-proxy:
     imageOverride:
       tag: "8340af1-frontend-proxy"
