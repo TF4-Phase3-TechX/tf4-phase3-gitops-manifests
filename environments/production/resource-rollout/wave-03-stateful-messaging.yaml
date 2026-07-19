@@ -1,0 +1,22 @@
+# Promote only after Wave 02 verification is PASS.
+components:
+  accounting:
+    resources:
+      requests: { cpu: 50m, memory: 512Mi }
+      limits: { cpu: 200m, memory: 512Mi }
+  fraud-detection:
+    resources:
+      requests: { cpu: 50m, memory: 150Mi }
+      limits: { cpu: 200m, memory: 300Mi }
+  kafka:
+    resources:
+      requests: { cpu: 100m, memory: 700Mi }
+      limits: { cpu: 500m, memory: 700Mi }
+  postgresql:
+    resources:
+      requests: { cpu: 50m, memory: 256Mi }
+      limits: { cpu: 500m, memory: 512Mi }
+  valkey-cart:
+    resources:
+      requests: { cpu: 20m, memory: 32Mi }
+      limits: { cpu: 100m, memory: 64Mi }

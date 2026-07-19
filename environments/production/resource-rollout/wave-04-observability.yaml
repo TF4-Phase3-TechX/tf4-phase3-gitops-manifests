@@ -1,0 +1,22 @@
+# Promote these overrides into observability-values.yaml only after Wave 03 PASS.
+opentelemetry-collector:
+  resources:
+    requests: { cpu: 50m, memory: 100Mi }
+    limits: { cpu: 200m, memory: 200Mi }
+prometheus:
+  alertmanager:
+    resources:
+      requests: { cpu: 10m, memory: 50Mi }
+      limits: { cpu: 100m, memory: 100Mi }
+  server:
+    resources:
+      requests: { cpu: 200m, memory: 1Gi }
+      limits: { cpu: 1000m, memory: 1Gi }
+grafana:
+  resources:
+    requests: { cpu: 100m, memory: 512Mi }
+    limits: { cpu: 500m, memory: 768Mi }
+opensearch:
+  resources:
+    requests: { cpu: 1000m, memory: 1Gi }
+    limits: { cpu: 1000m, memory: 2Gi }
