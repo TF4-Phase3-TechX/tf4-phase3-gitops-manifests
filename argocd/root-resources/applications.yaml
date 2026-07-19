@@ -1,6 +1,61 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: kyverno
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://kyverno.github.io/kyverno/'
+    chart: kyverno
+    targetRevision: 3.8.2
+    helm:
+      values: |
+        crds:
+          install: true
+        backgroundController:
+          enabled: false
+        cleanupController:
+          enabled: false
+        reportsController:
+          enabled: false
+        admissionController:
+          replicas: 2
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+          container:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+          initContainer:
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 256Mi
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kyverno
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: external-secrets
   namespace: argocd
   annotations:
@@ -57,6 +112,30 @@ spec:
     automated:
       prune: false
       selfHeal: true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-admission
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    targetRevision: main
+    path: platform/admission
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kyverno
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
 
 ---
 apiVersion: argoproj.io/v1alpha1
