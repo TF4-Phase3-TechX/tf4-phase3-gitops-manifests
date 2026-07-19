@@ -14,6 +14,9 @@ spec:
     helm:
       values: |
         installCRDs: true
+        serviceAccount:
+          annotations:
+            eks.amazonaws.com/role-arn: arn:aws:iam::511825856493:role/external-secrets-techx-tf4-cluster
         resources:
           requests: { cpu: 5m, memory: 32Mi }
           limits: { cpu: 50m, memory: 64Mi }
