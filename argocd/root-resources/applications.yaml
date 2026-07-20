@@ -96,6 +96,41 @@ spec:
       selfHeal: true
 
 ---
+# Ref: CDO08-REL-16 - Argo Rollouts controller, needed for the cart Blue-Green
+# cutover to ElastiCache Valkey (see VALKEY-MIGRATION-PLAN.md). Not synced yet;
+# this Application is prepared ahead of the actual migration window.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-rollouts
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://argoproj.github.io/argo-helm'
+    chart: argo-rollouts
+    targetRevision: 2.41.1
+    helm:
+      values: |
+        installCRDs: true
+        controller:
+          replicas: 2
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { cpu: 200m, memory: 256Mi }
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo-rollouts
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
