@@ -10,6 +10,8 @@ spec:
     - 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
     - 'https://charts.external-secrets.io'
     - 'https://kyverno.github.io/kyverno/'
+    - 'https://argoproj.github.io/argo-helm'
+    - 'https://strimzi.io/charts/'
   destinations:
     - namespace: techx-tf4
       server: https://kubernetes.default.svc
@@ -22,6 +24,10 @@ spec:
     - namespace: argocd
       server: https://kubernetes.default.svc
     - namespace: kube-system
+      server: https://kubernetes.default.svc
+    - namespace: argo-rollouts
+      server: https://kubernetes.default.svc
+    - namespace: kafka-operator
       server: https://kubernetes.default.svc
   orphanedResources:
     warn: true
@@ -98,3 +104,5 @@ spec:
       kind: "APIService"
     - group: "argoproj.io"
       kind: "Application"
+    - group: "argoproj.io"
+      kind: "Rollout"
