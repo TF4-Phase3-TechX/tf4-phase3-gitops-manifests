@@ -237,3 +237,72 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-rollouts
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://argoproj.github.io/argo-helm'
+    chart: argo-rollouts
+    targetRevision: 2.41.1
+    helm:
+      values: |
+        # Sizing kept lean on purpose: cluster is already at 90-98% CPU request on 4/5 nodes
+        # (Karpenter NodePool cap is 16 vCPU). Chart default is 2 replicas with no resources set.
+        controller:
+          replicas: 1
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { cpu: 250m, memory: 256Mi }
+        dashboard:
+          enabled: false
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo-rollouts
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: strimzi-operator
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://strimzi.io/charts/'
+    chart: strimzi-kafka-operator
+    targetRevision: 1.1.0
+    helm:
+      values: |
+        # Sizing kept lean on purpose: cluster is already at 90-98% CPU request on 4/5 nodes
+        # (Karpenter NodePool cap is 16 vCPU). Chart default requests 200m/384Mi, limits 1000m/384Mi.
+        replicas: 1
+        resources:
+          requests: { cpu: 50m, memory: 128Mi }
+          limits: { cpu: 500m, memory: 512Mi }
+        watchAnyNamespace: false
+        watchNamespaces: ["kafka-operator"]
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kafka-operator
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
