@@ -1,6 +1,65 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: kyverno
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://kyverno.github.io/kyverno/'
+    chart: kyverno
+    targetRevision: 3.8.2
+    helm:
+      values: |
+        crds:
+          install: true
+          migration:
+            enabled: false
+        backgroundController:
+          enabled: false
+        cleanupController:
+          enabled: false
+        reportsController:
+          enabled: false
+        admissionController:
+          replicas: 2
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+          container:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+          initContainer:
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 256Mi
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kyverno
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - Replace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: external-secrets
   namespace: argocd
   annotations:
@@ -14,6 +73,20 @@ spec:
     helm:
       values: |
         installCRDs: true
+        serviceAccount:
+          annotations:
+            eks.amazonaws.com/role-arn: arn:aws:iam::511825856493:role/external-secrets-techx-tf4-cluster
+        resources:
+          requests: { cpu: 5m, memory: 32Mi }
+          limits: { cpu: 50m, memory: 64Mi }
+        webhook:
+          resources:
+            requests: { cpu: 5m, memory: 32Mi }
+            limits: { cpu: 50m, memory: 48Mi }
+        certController:
+          resources:
+            requests: { cpu: 5m, memory: 48Mi }
+            limits: { cpu: 50m, memory: 80Mi }
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: external-secrets
@@ -43,6 +116,30 @@ spec:
     automated:
       prune: false
       selfHeal: true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-admission
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    targetRevision: main
+    path: platform/admission
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kyverno
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -78,7 +175,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: 2e98734c73b31c08cf172f630afb3895ea893a35
+      targetRevision: fccea0c14a4f60b38b394e3eec7f75c7b76a7287
       path: techx-corp-chart
       ref: chart-source
       helm:
@@ -89,6 +186,7 @@ spec:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
       targetRevision: main
       ref: values-source
+      path: environments/production/observability-resources
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: techx-observability
@@ -112,7 +210,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: 2e98734c73b31c08cf172f630afb3895ea893a35
+      targetRevision: fccea0c14a4f60b38b394e3eec7f75c7b76a7287
       path: techx-corp-chart
       ref: chart-source
       helm:

@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Config Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
       - name: Install validation dependencies
@@ -29,13 +29,13 @@ jobs:
           )"
           echo "revision=$revision" >> "$GITHUB_OUTPUT"
       - name: Checkout deployed source chart
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           repository: TF4-Phase3-TechX/tf4-phase3-repo
           ref: ${{ steps.chart.outputs.revision }}
           path: source-repo
       - name: Set up Helm
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4
         with:
           version: v3.14.0
       - name: Lint and render releases
