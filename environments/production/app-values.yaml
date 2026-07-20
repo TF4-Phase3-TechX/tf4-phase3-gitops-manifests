@@ -27,6 +27,13 @@ components:
       - name: JAEGER_HOST
         value: jaeger.techx-observability.svc.cluster.local
 
+  postgresql:
+    command:
+      - docker-entrypoint.sh
+      - postgres
+      - -c
+      - wal_level=logical
+
   product-reviews:
     serviceAccountName: product-reviews-bedrock
     readinessProbe:
@@ -73,3 +80,6 @@ components:
         type: RuntimeDefault
 
 bastionPortalAccess: { enabled: true }
+
+postgresqlMigrationBridge:
+  enabled: true
