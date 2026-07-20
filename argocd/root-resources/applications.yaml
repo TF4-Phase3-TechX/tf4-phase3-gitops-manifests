@@ -296,7 +296,7 @@ spec:
           requests: { cpu: 50m, memory: 128Mi }
           limits: { cpu: 500m, memory: 512Mi }
         watchAnyNamespace: false
-        watchNamespaces: ["kafka-operator"]
+        watchNamespaces: ["kafka-operator", "techx-tf4"]
         # Chart default securityContext is empty ({}), which fails the cluster-wide
         # require-drop-all-capabilities and require-run-as-nonroot admission policies.
         securityContext:

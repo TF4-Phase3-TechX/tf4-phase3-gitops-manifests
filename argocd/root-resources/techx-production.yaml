@@ -106,3 +106,5 @@ spec:
       kind: "Application"
     - group: "argoproj.io"
       kind: "Rollout"
+    - group: "kafka.strimzi.io"
+      kind: "KafkaMirrorMaker2"
