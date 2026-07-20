@@ -297,6 +297,17 @@ spec:
           limits: { cpu: 500m, memory: 512Mi }
         watchAnyNamespace: false
         watchNamespaces: ["kafka-operator"]
+        # Chart default securityContext is empty ({}), which fails the cluster-wide
+        # require-drop-all-capabilities and require-run-as-nonroot admission policies.
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          runAsUser: 1001
+        podSecurityContext:
+          seccompProfile:
+            type: RuntimeDefault
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kafka-operator
