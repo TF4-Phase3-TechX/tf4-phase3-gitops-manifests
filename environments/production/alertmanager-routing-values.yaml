@@ -1,9 +1,28 @@
 prometheus:
   alertmanager:
     enabled: true
+    alertmanagerSpec:
+      secrets:
+        - alertmanager-smtp-auth
+    templateFiles:
+      slack.tmpl: |-
+        {{ define "slack.title" }}
+        [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
+        {{ end }}
+        {{ define "slack.text" }}
+        {{ range .Alerts -}}
+        *Alert:* {{ .Annotations.summary }}{{ if .Labels.severity }} - `{{ .Labels.severity }}`{{ end }}
+        *Description:* {{ .Annotations.description }}
+        *Details:*
+          {{ range .Labels.SortedPairs }}• *{{ .Name }}:* `{{ .Value }}`
+          {{ end }}
+        {{ end }}
+        {{ end }}
     config:
       global:
         resolve_timeout: 5m
+      templates:
+        - '/etc/alertmanager/config/*.tmpl'
       route:
         group_by: ['alertname']
         group_wait: 10s
@@ -17,8 +36,9 @@ prometheus:
           from: 'alertmanager@techx.corp'
           smarthost: 'smtp.mailtrap.io:2525'
           auth_username: 'api'
-          auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+          auth_password_file: '/etc/alertmanager/secrets/alertmanager-smtp-auth/smtp-password'
         slack_configs:
         - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
-
+          title: '{{ template "slack.title" . }}'
+          text: '{{ template "slack.text" . }}'
