@@ -25,8 +25,12 @@ components:
       blueGreen:
         autoPromotionEnabled: false
     envOverrides:
+      # NOTE: "master.<rg-id>...cache.amazonaws.com" only exists while the
+      # replication group is mid Online Migration ("migrating" status). Once
+      # 05-complete-migration.sh finishes, that hostname stops resolving —
+      # this must be the standalone node-group primary endpoint instead.
       - name: VALKEY_ADDR
-        value: "master.techx-tf4-valkey-cart.pyo0mq.use1.cache.amazonaws.com:6379"
+        value: "techx-tf4-valkey-cart.pyo0mq.ng.0001.use1.cache.amazonaws.com:6379"
 
   load-generator:
     envOverrides:
