@@ -131,7 +131,7 @@ mirrormaker2:
     bootstrapServers: "b-2.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096,b-1.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096"
 
 valkeyMigrationBridge:
-  # CDO08-REL-16 BƯỚC 1.2: temporary internal NLB bridge so AWS ElastiCache Online
-  # Migration can reach the self-hosted valkey-cart source. Disable + cleanup after
-  # cutover is stable (BƯỚC 3.8 / 08-cleanup.sh) - do not leave enabled long-term.
-  enabled: true
+  # CDO08-REL-16 BƯỚC 3.8: migration completed and cutover confirmed stable on
+  # ElastiCache - the replication link is already severed by complete-migration,
+  # so this bridge no longer serves any purpose. Disabled per 08-cleanup.sh.
+  enabled: false
