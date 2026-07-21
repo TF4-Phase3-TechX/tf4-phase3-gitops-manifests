@@ -14,7 +14,8 @@ components:
       tag: "8340af1-checkout"
   currency:
     imageOverride:
-      tag: "411e9a2-currency"
+      tag: "a930936-currency"
+      digest: "sha256:663bf6d56564e82cd767233bb70c45df6818a18d64781a7dc37732a4247e791c"
   email:
     imageOverride:
       tag: "8340af1-email"
