@@ -84,6 +84,14 @@ bastionPortalAccess: { enabled: true }
 postgresqlMigrationBridge:
   enabled: true
 
+managedData:
+  # CDO08-REL-15: PostgreSQL RDS cutover gate.
+  # Keep this PR unmerged until writer freeze, DMS CDC catch-up, and strict parity pass.
+  enabled: true
+  postgresql:
+    enabled: true
+    secretName: rds-postgres-secret
+
 valkeyMigrationBridge:
   # CDO08-REL-16 BƯỚC 1.2: temporary internal NLB bridge so AWS ElastiCache Online
   # Migration can reach the self-hosted valkey-cart source. Disable + cleanup after
