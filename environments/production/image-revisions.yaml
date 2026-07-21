@@ -21,7 +21,8 @@ components:
       tag: "8340af1-email"
   fraud-detection:
     imageOverride:
-      tag: "8340af1-fraud-detection"
+      tag: "c553182-fraud-detection"
+      digest: "sha256:05162e17b99e9e61f9a61b630442e9f52baf6120eb739f745726335ac18ea554"
   frontend:
     imageOverride:
       tag: "411e9a2-frontend"
