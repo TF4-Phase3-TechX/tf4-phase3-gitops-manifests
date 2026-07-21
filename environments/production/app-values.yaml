@@ -32,13 +32,10 @@ components:
     rolloutStrategy:
       blueGreen:
         autoPromotionEnabled: false
-    envOverrides:
-      # NOTE: "master.<rg-id>...cache.amazonaws.com" only exists while the
-      # replication group is mid Online Migration ("migrating" status). Once
-      # 05-complete-migration.sh finishes, that hostname stops resolving —
-      # this must be the standalone node-group primary endpoint instead.
-      - name: VALKEY_ADDR
-        value: "techx-tf4-valkey-cart.pyo0mq.ng.0001.use1.cache.amazonaws.com:6379"
+    # BƯỚC 6 pha 1-2: VALKEY_ADDR/VALKEY_TLS/VALKEY_PASSWORD now sourced from
+    # managedData.valkey (elasticache-valkey-secret) below instead of a plain
+    # envOverrides value - _pod.tpl replaces VALKEY_ADDR with a secretKeyRef and
+    # adds VALKEY_TLS/VALKEY_PASSWORD automatically once managedData.valkey.enabled.
 
   load-generator:
     envOverrides:
@@ -121,6 +118,14 @@ managedData:
     enabled: true
     secretName: msk-kafka-secret
     services: [checkout]
+  # CDO08-REL-16 BƯỚC 6 pha 1-2: wires VALKEY_ADDR/VALKEY_TLS/VALKEY_PASSWORD for
+  # cart from elasticache-valkey-secret (_pod.tpl). DO NOT MERGE until the secret
+  # has real address/password/tls_enabled values (SEC-13 owns techx/tf4/elasticache-valkey -
+  # see PR #79's own warning) - merging before that replaces VALKEY_ADDR with an
+  # empty/stale value and breaks cart's connection.
+  valkey:
+    enabled: true
+    secretName: elasticache-valkey-secret
 
 # CDO08-REL-17: start Kafka self-hosted -> MSK live replication with Strimzi MirrorMaker2.
 # This does not cut over checkout/accounting/fraud-detection traffic.
