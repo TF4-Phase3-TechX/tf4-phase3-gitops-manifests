@@ -83,3 +83,9 @@ bastionPortalAccess: { enabled: true }
 
 postgresqlMigrationBridge:
   enabled: true
+
+valkeyMigrationBridge:
+  # CDO08-REL-16 BƯỚC 1.2: temporary internal NLB bridge so AWS ElastiCache Online
+  # Migration can reach the self-hosted valkey-cart source. Disable + cleanup after
+  # cutover is stable (BƯỚC 3.8 / 08-cleanup.sh) - do not leave enabled long-term.
+  enabled: true
