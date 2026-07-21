@@ -15,17 +15,12 @@ default:
       value: otel-collector.techx-observability.svc.cluster.local
 
 components:
-  # CDO08-REL-17: enable Argo Rollouts Blue-Green for the Kafka cutover services.
-  # Deliberately kept in its own commit, separate from any managedData.kafka change —
-  # see KAFKA-CUTOVER-RETRY-RUNBOOK.md Mục B. No Kafka config change here, only the
-  # Deployment -> Rollout resource kind switch (same self-hosted config, same image).
+  # CDO08-REL-17: enable Argo Rollouts Blue-Green for checkout only — the only
+  # Kafka cutover service with a real inbound Service. accounting/fraud-detection
+  # are pure Kafka consumers (no Service) and use strategy: Recreate instead
+  # (set in the chart directly, no GitOps flag needed) — see
+  # KAFKA-CUTOVER-RETRY-RUNBOOK.md Mục B.
   checkout:
-    useRollout: true
-
-  accounting:
-    useRollout: true
-
-  fraud-detection:
     useRollout: true
 
   cart:
