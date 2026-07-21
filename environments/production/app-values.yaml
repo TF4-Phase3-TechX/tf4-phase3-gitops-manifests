@@ -15,6 +15,14 @@ default:
       value: otel-collector.techx-observability.svc.cluster.local
 
 components:
+  cart:
+    # CDO08-REL-16 BƯỚC 3.1: cutover to ElastiCache via Blue-Green Rollout (paused
+    # until 06-promote-rollout.sh). Requires top-level rollouts.enabled: true below.
+    useRollout: true
+    envOverrides:
+      - name: VALKEY_ADDR
+        value: "master.techx-tf4-valkey-cart.pyo0mq.use1.cache.amazonaws.com:6379"
+
   load-generator:
     envOverrides:
       - name: LOCUST_AUTOSTART
@@ -78,6 +86,9 @@ components:
     podSecurityContext:
       seccompProfile:
         type: RuntimeDefault
+
+rollouts:
+  enabled: true
 
 bastionPortalAccess: { enabled: true }
 
