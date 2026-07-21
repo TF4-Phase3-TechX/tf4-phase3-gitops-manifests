@@ -1,0 +1,1012 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-default-deny-app-workloads
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: Exists
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress: []
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-dns-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: Exists
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+        - ipBlock:
+            cidr: 172.20.0.10/32
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-telemetry-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - accounting
+          - ad
+          - cart
+          - checkout
+          - currency
+          - email
+          - fraud-detection
+          - frontend
+          - frontend-proxy
+          - image-provider
+          - kafka
+          - llm
+          - load-generator
+          - payment
+          - postgresql
+          - product-catalog
+          - product-reviews
+          - quote
+          - recommendation
+          - shipping
+          - valkey-cart
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: techx-observability
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: opentelemetry-collector
+        - ipBlock:
+            cidr: 172.20.75.235/32
+      ports:
+        - protocol: TCP
+          port: 4317
+        - protocol: TCP
+          port: 4318
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-frontend-proxy-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+  annotations:
+    cdo08.techx.io/public-ingress-owner: "CDO08-SEC-21"
+    cdo08.techx.io/public-ingress-reason: "Storefront is intentionally public; expose only frontend-proxy TCP/8080. Do not treat this as broad egress."
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: frontend-proxy
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: load-generator
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-frontend-proxy-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: frontend-proxy
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend
+        - ipBlock:
+            cidr: 172.20.39.20/32
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: image-provider
+        - ipBlock:
+            cidr: 172.20.214.139/32
+      ports:
+        - protocol: TCP
+          port: 8081
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+        - protocol: TCP
+          port: 8016
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: techx-observability
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: grafana
+        - ipBlock:
+            cidr: 172.20.108.200/32
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 3000
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: techx-observability
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: jaeger
+        - ipBlock:
+            cidr: 172.20.88.27/32
+      ports:
+        - protocol: TCP
+          port: 16686
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-frontend-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: frontend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend-proxy
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-frontend-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: frontend
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: ad
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: cart
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: checkout
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: currency
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-catalog
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: recommendation
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: shipping
+        - ipBlock:
+            cidr: 172.20.226.181/32
+        - ipBlock:
+            cidr: 172.20.148.103/32
+        - ipBlock:
+            cidr: 172.20.60.78/32
+        - ipBlock:
+            cidr: 172.20.138.94/32
+        - ipBlock:
+            cidr: 172.20.14.135/32
+        - ipBlock:
+            cidr: 172.20.173.151/32
+        - ipBlock:
+            cidr: 172.20.221.24/32
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-reviews
+        - ipBlock:
+            cidr: 172.20.99.48/32
+      ports:
+        - protocol: TCP
+          port: 3551
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-frontend-downstream-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - ad
+          - cart
+          - checkout
+          - currency
+          - product-catalog
+          - recommendation
+          - shipping
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-product-reviews-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: product-reviews
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend
+      ports:
+        - protocol: TCP
+          port: 3551
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-product-catalog-support-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: product-catalog
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-reviews
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: recommendation
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-checkout-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: checkout
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: cart
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: currency
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: email
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: payment
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-catalog
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: shipping
+        - ipBlock:
+            cidr: 172.20.148.103/32
+        - ipBlock:
+            cidr: 172.20.138.94/32
+        - ipBlock:
+            cidr: 172.20.152.217/32
+        - ipBlock:
+            cidr: 172.20.95.167/32
+        - ipBlock:
+            cidr: 172.20.14.135/32
+        - ipBlock:
+            cidr: 172.20.221.24/32
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: kafka
+        - ipBlock:
+            cidr: 172.20.180.83/32
+      ports:
+        - protocol: TCP
+          port: 9092
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-checkout-downstream-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - cart
+          - currency
+          - email
+          - payment
+          - product-catalog
+          - shipping
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: checkout
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-kafka-ingress-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+  annotations:
+    cdo08.techx.io/mirrormaker2-required: "Allow orders-mirrormaker2-mirrormaker2 to kafka:9092; omitting this caused the prior rollback."
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: kafka
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: accounting
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: checkout
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: fraud-detection
+        - podSelector:
+            matchLabels:
+              strimzi.io/cluster: orders-mirrormaker2
+              strimzi.io/kind: KafkaMirrorMaker2
+              strimzi.io/name: orders-mirrormaker2-mirrormaker2
+      ports:
+        - protocol: TCP
+          port: 9092
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: kafka
+      ports:
+        - protocol: TCP
+          port: 9093
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: kafka
+        - ipBlock:
+            cidr: 172.20.180.83/32
+      ports:
+        - protocol: TCP
+          port: 9093
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-kafka-client-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - accounting
+          - fraud-detection
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: kafka
+        - ipBlock:
+            cidr: 172.20.180.83/32
+      ports:
+        - protocol: TCP
+          port: 9092
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-cart-valkey
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: valkey-cart
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: cart
+      ports:
+        - protocol: TCP
+          port: 6379
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-cart-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+  annotations:
+    cdo08.techx.io/external-egress-owner: "CDO08-SEC-21"
+    cdo08.techx.io/external-egress-reason: "Cart uses approved private ElastiCache/Valkey path; allow only TCP/6379 to private subnets, not broad internet egress."
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: cart
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: valkey-cart
+        - ipBlock:
+            cidr: 172.20.4.115/32
+        - ipBlock:
+            cidr: 10.0.10.0/24
+        - ipBlock:
+            cidr: 10.0.11.0/24
+      ports:
+        - protocol: TCP
+          port: 6379
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-postgresql-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: postgresql
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: accounting
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-catalog
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-reviews
+      ports:
+        - protocol: TCP
+          port: 5432
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-postgresql-client-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+  annotations:
+    cdo08.techx.io/external-egress-owner: "CDO08-SEC-21"
+    cdo08.techx.io/external-egress-reason: "DB clients use approved private RDS PostgreSQL endpoint; allow only TCP/5432 to private subnets, not broad internet egress."
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - accounting
+          - product-catalog
+          - product-reviews
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: postgresql
+        - ipBlock:
+            cidr: 172.20.87.154/32
+        - ipBlock:
+            cidr: 10.0.10.0/24
+        - ipBlock:
+            cidr: 10.0.11.0/24
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-product-reviews-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+  annotations:
+    cdo08.techx.io/bedrock-egress-status: "Deferred; standard Kubernetes NetworkPolicy cannot safely express AWS Bedrock FQDN allowlist."
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: product-reviews
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-catalog
+        - ipBlock:
+            cidr: 172.20.14.135/32
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: postgresql
+        - ipBlock:
+            cidr: 172.20.87.154/32
+        - ipBlock:
+            cidr: 10.0.10.0/24
+        - ipBlock:
+            cidr: 10.0.11.0/24
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-recommendation-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: recommendation
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-catalog
+        - ipBlock:
+            cidr: 172.20.14.135/32
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-shipping-quote-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: quote
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: shipping
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-shipping-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: shipping
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: quote
+        - ipBlock:
+            cidr: 172.20.114.244/32
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-flagd-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: flagd
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values:
+                  - accounting
+                  - ad
+                  - cart
+                  - checkout
+                  - email
+                  - fraud-detection
+                  - frontend
+                  - frontend-proxy
+                  - kafka
+                  - llm
+                  - load-generator
+                  - payment
+                  - product-catalog
+                  - product-reviews
+                  - recommendation
+                  - shipping
+      ports:
+        - protocol: TCP
+          port: 8013
+        - protocol: TCP
+          port: 8016
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-flagd-client-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - accounting
+          - ad
+          - cart
+          - checkout
+          - email
+          - fraud-detection
+          - frontend
+          - frontend-proxy
+          - kafka
+          - llm
+          - load-generator
+          - payment
+          - product-catalog
+          - product-reviews
+          - recommendation
+          - shipping
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+        - protocol: TCP
+          port: 8016
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-load-generator-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: load-generator
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend-proxy
+        - ipBlock:
+            cidr: 172.20.74.72/32
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: flagd
+        - ipBlock:
+            cidr: 172.20.53.96/32
+      ports:
+        - protocol: TCP
+          port: 8013
+        - protocol: TCP
+          port: 8016
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-observability-scrape-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - frontend-proxy
+          - image-provider
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: techx-observability
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: opentelemetry-collector
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8081
