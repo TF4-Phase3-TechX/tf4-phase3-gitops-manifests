@@ -37,6 +37,23 @@ components:
       - name: LOCUST_AUTOSTART
         value: "true"
 
+  quote:
+    envOverrides:
+      - name: OTEL_EXPORTER_OTLP_TIMEOUT
+        value: "100"
+      - name: OTEL_EXPORTER_OTLP_LOGS_TIMEOUT
+        value: "100"
+      - name: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT
+        value: "100"
+      - name: OTEL_EXPORTER_OTLP_METRICS_TIMEOUT
+        value: "100"
+      - name: OTEL_BLRP_EXPORT_TIMEOUT
+        value: "100"
+      - name: OTEL_BSP_EXPORT_TIMEOUT
+        value: "100"
+      - name: OTEL_METRIC_EXPORT_TIMEOUT
+        value: "100"
+
   frontend-proxy:
     envOverrides:
       - name: GRAFANA_HOST
