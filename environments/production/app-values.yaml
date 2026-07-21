@@ -15,6 +15,19 @@ default:
       value: otel-collector.techx-observability.svc.cluster.local
 
 components:
+  # CDO08-REL-17: enable Argo Rollouts Blue-Green for the Kafka cutover services.
+  # Deliberately kept in its own commit, separate from any managedData.kafka change —
+  # see KAFKA-CUTOVER-RETRY-RUNBOOK.md Mục B. No Kafka config change here, only the
+  # Deployment -> Rollout resource kind switch (same self-hosted config, same image).
+  checkout:
+    useRollout: true
+
+  accounting:
+    useRollout: true
+
+  fraud-detection:
+    useRollout: true
+
   cart:
     # CDO08-REL-16 BƯỚC 3.1: cutover to ElastiCache via Blue-Green Rollout (paused
     # until 06-promote-rollout.sh). Requires top-level rollouts.enabled: true below.
