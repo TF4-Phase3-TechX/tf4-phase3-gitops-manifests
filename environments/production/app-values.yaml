@@ -105,16 +105,12 @@ postgresqlMigrationBridge:
   enabled: true
 
 managedData:
-  # CDO08-REL-15: PostgreSQL RDS cutover gate.
-  # Keep this PR unmerged until writer freeze, DMS CDC catch-up, and strict parity pass.
   enabled: true
   postgresql:
     enabled: true
     secretName: rds-postgres-secret
-  # CDO08-REL-17: Kafka/MSK cutover gate for checkout, accounting, and fraud-detection.
-  # Requires MSK topics, SCRAM secret, ExternalSecret, MirrorMaker2 parity, and rollback path to pass.
   kafka:
-    enabled: true
+    enabled: false
     secretName: msk-kafka-secret
 
 # CDO08-REL-17: start Kafka self-hosted -> MSK live replication with Strimzi MirrorMaker2.
