@@ -993,6 +993,8 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/component: frontend-proxy
+        - ipBlock:
+            cidr: 172.20.74.72/32
       ports:
         - protocol: TCP
           port: 8080
