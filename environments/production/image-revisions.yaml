@@ -7,7 +7,8 @@ components:
       tag: "8340af1-ad"
   cart:
     imageOverride:
-      tag: "8340af1-cart"
+      tag: "0f983db-cart"
+      digest: "sha256:4b6d4958d2fdbeb4862b5d83965d754a3b4551b3c9fd44e58eda2f350374ce28"
   checkout:
     imageOverride:
       tag: "8340af1-checkout"
