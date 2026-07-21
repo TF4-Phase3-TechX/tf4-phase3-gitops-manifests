@@ -14,14 +14,11 @@ default:
     - name: OTEL_COLLECTOR_NAME
       value: otel-collector.techx-observability.svc.cluster.local
 
-# CDO08-REL-17: enable Argo Rollouts Blue-Green for the Kafka cutover services.
-# Deliberately kept in its own commit, separate from any managedData.kafka change —
-# see KAFKA-CUTOVER-RETRY-RUNBOOK.md Mục B. No Kafka config change here, only the
-# Deployment -> Rollout resource kind switch (same self-hosted config, same image).
-rollouts:
-  enabled: true
-
 components:
+  # CDO08-REL-17: enable Argo Rollouts Blue-Green for the Kafka cutover services.
+  # Deliberately kept in its own commit, separate from any managedData.kafka change —
+  # see KAFKA-CUTOVER-RETRY-RUNBOOK.md Mục B. No Kafka config change here, only the
+  # Deployment -> Rollout resource kind switch (same self-hosted config, same image).
   checkout:
     useRollout: true
 
@@ -30,6 +27,23 @@ components:
 
   fraud-detection:
     useRollout: true
+
+  cart:
+    # CDO08-REL-16 BƯỚC 3.1: cutover to ElastiCache via Blue-Green Rollout (paused
+    # until 06-promote-rollout.sh). Requires top-level rollouts.enabled: true below.
+    # rolloutStrategy set explicitly (not just relying on the chart default) since
+    # the ArgoCD-pinned chart revision predates that default existing for cart.
+    useRollout: true
+    rolloutStrategy:
+      blueGreen:
+        autoPromotionEnabled: false
+    envOverrides:
+      # NOTE: "master.<rg-id>...cache.amazonaws.com" only exists while the
+      # replication group is mid Online Migration ("migrating" status). Once
+      # 05-complete-migration.sh finishes, that hostname stops resolving —
+      # this must be the standalone node-group primary endpoint instead.
+      - name: VALKEY_ADDR
+        value: "techx-tf4-valkey-cart.pyo0mq.ng.0001.use1.cache.amazonaws.com:6379"
 
   load-generator:
     envOverrides:
@@ -95,7 +109,33 @@ components:
       seccompProfile:
         type: RuntimeDefault
 
+rollouts:
+  enabled: true
+
 bastionPortalAccess: { enabled: true }
 
 postgresqlMigrationBridge:
+  enabled: true
+
+managedData:
+  enabled: true
+  postgresql:
+    enabled: true
+    secretName: rds-postgres-secret
+  kafka:
+    enabled: false
+    secretName: msk-kafka-secret
+
+# CDO08-REL-17: start Kafka self-hosted -> MSK live replication with Strimzi MirrorMaker2.
+# This does not cut over checkout/accounting/fraud-detection traffic.
+mirrormaker2:
+  enabled: true
+  version: 4.2.1
+  targetCluster:
+    bootstrapServers: "b-2.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096,b-1.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096"
+
+valkeyMigrationBridge:
+  # CDO08-REL-16 BƯỚC 1.2: temporary internal NLB bridge so AWS ElastiCache Online
+  # Migration can reach the self-hosted valkey-cart source. Disable + cleanup after
+  # cutover is stable (BƯỚC 3.8 / 08-cleanup.sh) - do not leave enabled long-term.
   enabled: true

@@ -175,7 +175,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: fccea0c14a4f60b38b394e3eec7f75c7b76a7287
+      targetRevision: 441f8d21e1945b99a5b7542f6f3111dfdd92e4ca
       path: techx-corp-chart
       ref: chart-source
       helm:
@@ -210,7 +210,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: fccea0c14a4f60b38b394e3eec7f75c7b76a7287
+      targetRevision: 441f8d21e1945b99a5b7542f6f3111dfdd92e4ca
       path: techx-corp-chart
       ref: chart-source
       helm:
@@ -296,7 +296,7 @@ spec:
           requests: { cpu: 50m, memory: 128Mi }
           limits: { cpu: 500m, memory: 512Mi }
         watchAnyNamespace: false
-        watchNamespaces: ["kafka-operator"]
+        watchNamespaces: ["kafka-operator", "techx-tf4"]
         # Chart default securityContext is empty ({}), which fails the cluster-wide
         # require-drop-all-capabilities and require-run-as-nonroot admission policies.
         securityContext:
