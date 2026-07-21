@@ -104,6 +104,13 @@ bastionPortalAccess: { enabled: true }
 postgresqlMigrationBridge:
   enabled: true
 
+# CDO08-REL-17: enable Strimzi MirrorMaker2 for Kafka self-hosted -> MSK live replication.
+# This starts replication only; it does not cut over checkout/accounting/fraud-detection.
+mirrormaker2:
+  enabled: true
+  targetCluster:
+    bootstrapServers: "b-2.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096,b-1.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096"
+
 valkeyMigrationBridge:
   # CDO08-REL-16 BƯỚC 1.2: temporary internal NLB bridge so AWS ElastiCache Online
   # Migration can reach the self-hosted valkey-cart source. Disable + cleanup after
