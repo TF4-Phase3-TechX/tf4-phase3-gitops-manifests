@@ -116,6 +116,7 @@ managedData:
 # This does not cut over checkout/accounting/fraud-detection traffic.
 mirrormaker2:
   enabled: true
+  version: 4.2.1
   targetCluster:
     bootstrapServers: "b-2.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096,b-1.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096"
 
