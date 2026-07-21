@@ -118,9 +118,8 @@ managedData:
     enabled: true
     secretName: rds-postgres-secret
   kafka:
-    enabled: true
+    enabled: false
     secretName: msk-kafka-secret
-    services: [checkout]
 
 # CDO08-REL-17: start Kafka self-hosted -> MSK live replication with Strimzi MirrorMaker2.
 # This does not cut over checkout/accounting/fraud-detection traffic.
