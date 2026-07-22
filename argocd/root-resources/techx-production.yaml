@@ -29,6 +29,8 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: kafka-operator
       server: https://kubernetes.default.svc
+    - namespace: cloudflare-access
+      server: https://kubernetes.default.svc
   orphanedResources:
     warn: true
     ignore:
