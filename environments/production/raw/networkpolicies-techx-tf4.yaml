@@ -759,7 +759,10 @@ metadata:
   labels:
     app.kubernetes.io/part-of: cdo08-sec21
   annotations:
-    cdo08.techx.io/bedrock-egress-status: "Deferred; standard Kubernetes NetworkPolicy cannot safely express AWS Bedrock FQDN allowlist."
+    cdo08.techx.io/external-egress-owner: "CDO08-SEC-21"
+    cdo08.techx.io/external-egress-expiry: "2026-08-21"
+    cdo08.techx.io/external-egress-reason: "Product-reviews uses EKS Pod Identity to obtain Bedrock credentials; allow only the node-local credential endpoint on TCP/80, not broad internet egress."
+    cdo08.techx.io/bedrock-egress-status: "Bedrock runtime FQDN egress remains deferred; standard Kubernetes NetworkPolicy cannot safely express AWS Bedrock FQDN allowlist."
 spec:
   podSelector:
     matchLabels:
@@ -798,6 +801,12 @@ spec:
       ports:
         - protocol: TCP
           port: 8013
+    - to:
+        - ipBlock:
+            cidr: 169.254.170.23/32
+      ports:
+        - protocol: TCP
+          port: 80
 
 ---
 apiVersion: networking.k8s.io/v1
