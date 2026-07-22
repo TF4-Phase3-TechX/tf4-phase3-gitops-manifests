@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: techx-tf4
+  labels:
+    name: techx-tf4
+    techx.io/policy-scope: enforced
+    techx.io/sec17-digest-enforce: "true"
+    techx.io/sec17-signature-enforce: "true"
