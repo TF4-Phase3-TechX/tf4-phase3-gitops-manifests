@@ -28,17 +28,13 @@ components:
     # until 06-promote-rollout.sh). Requires top-level rollouts.enabled: true below.
     # rolloutStrategy set explicitly (not just relying on the chart default) since
     # the ArgoCD-pinned chart revision predates that default existing for cart.
+    # CDO08-SEC-13/REL-16: endpoint/TLS/password now come from
+    # elasticache-valkey-secret through managedData.valkey below, not plaintext
+    # envOverrides.
     useRollout: true
     rolloutStrategy:
       blueGreen:
         autoPromotionEnabled: false
-    envOverrides:
-      # NOTE: "master.<rg-id>...cache.amazonaws.com" only exists while the
-      # replication group is mid Online Migration ("migrating" status). Once
-      # 05-complete-migration.sh finishes, that hostname stops resolving —
-      # this must be the standalone node-group primary endpoint instead.
-      - name: VALKEY_ADDR
-        value: "techx-tf4-valkey-cart.pyo0mq.ng.0001.use1.cache.amazonaws.com:6379"
 
   load-generator:
     envOverrides:
@@ -117,6 +113,9 @@ managedData:
   postgresql:
     enabled: true
     secretName: rds-postgres-secret
+  valkey:
+    enabled: true
+    secretName: elasticache-valkey-secret
   kafka:
     enabled: true
     secretName: msk-kafka-secret
