@@ -66,7 +66,7 @@ components:
     serviceAccountName: product-reviews-bedrock
     readinessProbe:
       grpc:
-        port: 3551
+        port: 3552
       initialDelaySeconds: 2
       periodSeconds: 2
       timeoutSeconds: 1
