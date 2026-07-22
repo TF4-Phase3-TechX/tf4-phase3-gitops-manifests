@@ -12,7 +12,10 @@ prometheus:
         cpu: 1000m
         memory: 1Gi
 grafana: { enabled: true }
-opensearch: { enabled: true }
+opensearch:
+  enabled: true
+  otelLogsLifecycle:
+    enabled: true
 metrics-server:
   enabled: true
   fullnameOverride: metrics-server
