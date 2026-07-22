@@ -4,21 +4,37 @@ prometheus:
     config:
       global:
         resolve_timeout: 5m
+        smtp_smarthost: 'smtp.gmail.com:587'
+        smtp_from: 'tf4-on-call-email@gmail.com'
+        smtp_auth_username: 'tf4-on-call-email@gmail.com'
+        smtp_auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+        smtp_require_tls: true
       route:
-        group_by: ['alertname']
+        group_by: ['alertname', 'service']
         group_wait: 10s
         group_interval: 10s
         repeat_interval: 1h
-        receiver: 'email-notifications'
+        receiver: 'combined-notifications'
+        routes:
+        - receiver: 'aiops-oncall'
+          matchers:
+          - 'component="aiops-detector"'
       receivers:
-      - name: 'email-notifications'
-        email_configs:
-        - to: 'recipient@techx.corp'
-          from: 'alertmanager@techx.corp'
-          smarthost: 'smtp.mailtrap.io:2525'
-          auth_username: 'api'
-          auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+      - name: 'combined-notifications'
         slack_configs:
-        - api_url_file: /etc/alertmanager/slack/webhook-url
+        - channel: '#tf4-alerts'
+          api_url_file: /etc/alertmanager/slack/webhook-url
+          send_resolved: true
+        email_configs:
+        - to: 'buithanhnghia@dtu.edu.vn'
+          send_resolved: true
+        - to: 'vanphutin2902@gmail.com'
+          send_resolved: true
+        - to: 'ngonguyentruongan2907@gmail.com'
+          send_resolved: true
+      - name: 'aiops-oncall'
+        slack_configs:
+        - channel: '#tf4-alerts'
+          api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
 

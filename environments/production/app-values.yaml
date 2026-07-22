@@ -9,12 +9,25 @@ grafana: { enabled: false }
 opensearch: { enabled: false }
 metrics-server: { enabled: false }
 
+# Run the detector continuously while every production mutation path remains
+# disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
+aiopsRemediation:
+  liveEnabled: false
+
 default:
   envOverrides:
     - name: OTEL_COLLECTOR_NAME
       value: otel-collector.techx-observability.svc.cluster.local
 
 components:
+  aiops:
+    enabled: true
+    envOverrides:
+      - name: REMEDIATION_MODE
+        value: dry-run
+      - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
+        value: "false"
+
   # CDO08-REL-17: enable Argo Rollouts Blue-Green for checkout only — the only
   # Kafka cutover service with a real inbound Service. accounting/fraud-detection
   # are pure Kafka consumers (no Service) and use strategy: Recreate instead
