@@ -25,6 +25,9 @@ spec:
           enabled: false
         admissionController:
           replicas: 2
+          serviceAccount:
+            annotations:
+              eks.amazonaws.com/role-arn: arn:aws:iam::511825856493:role/kyverno-techx-tf4-cluster
           podDisruptionBudget:
             enabled: true
             minAvailable: 1
