@@ -1,7 +1,8 @@
 components:
   accounting:
     imageOverride:
-      tag: "bd4726d-accounting"
+      tag: "c553182-accounting"
+      digest: "sha256:2989ea712e8a441acc75c1f6aefa4e6c1fbaf3a46347d6007b72b46d90e167d3"
   ad:
     imageOverride:
       tag: "8340af1-ad"
@@ -11,7 +12,8 @@ components:
       digest: "sha256:4b6d4958d2fdbeb4862b5d83965d754a3b4551b3c9fd44e58eda2f350374ce28"
   checkout:
     imageOverride:
-      tag: "8340af1-checkout"
+      tag: "2413d96-checkout"
+      digest: "sha256:0066750db621688f8a04c22e7c82711aff20b438fcec595345599afdc5a4b5b2"
   currency:
     imageOverride:
       tag: "a930936-currency"
@@ -21,7 +23,8 @@ components:
       tag: "8340af1-email"
   fraud-detection:
     imageOverride:
-      tag: "8340af1-fraud-detection"
+      tag: "c553182-fraud-detection"
+      digest: "sha256:05162e17b99e9e61f9a61b630442e9f52baf6120eb739f745726335ac18ea554"
   frontend:
     imageOverride:
       tag: "411e9a2-frontend"

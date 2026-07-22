@@ -15,22 +15,26 @@ default:
       value: otel-collector.techx-observability.svc.cluster.local
 
 components:
+  # CDO08-REL-17: enable Argo Rollouts Blue-Green for checkout only — the only
+  # Kafka cutover service with a real inbound Service. accounting/fraud-detection
+  # are pure Kafka consumers (no Service) and use strategy: Recreate instead
+  # (set in the chart directly, no GitOps flag needed) — see
+  # KAFKA-CUTOVER-RETRY-RUNBOOK.md Mục B.
+  checkout:
+    useRollout: true
+
   cart:
     # CDO08-REL-16 BƯỚC 3.1: cutover to ElastiCache via Blue-Green Rollout (paused
     # until 06-promote-rollout.sh). Requires top-level rollouts.enabled: true below.
     # rolloutStrategy set explicitly (not just relying on the chart default) since
     # the ArgoCD-pinned chart revision predates that default existing for cart.
+    # CDO08-SEC-13/REL-16: endpoint/TLS/password now come from
+    # elasticache-valkey-secret through managedData.valkey below, not plaintext
+    # envOverrides.
     useRollout: true
     rolloutStrategy:
       blueGreen:
         autoPromotionEnabled: false
-    envOverrides:
-      # NOTE: "master.<rg-id>...cache.amazonaws.com" only exists while the
-      # replication group is mid Online Migration ("migrating" status). Once
-      # 05-complete-migration.sh finishes, that hostname stops resolving —
-      # this must be the standalone node-group primary endpoint instead.
-      - name: VALKEY_ADDR
-        value: "techx-tf4-valkey-cart.pyo0mq.ng.0001.use1.cache.amazonaws.com:6379"
 
   load-generator:
     envOverrides:
@@ -45,11 +49,18 @@ components:
         value: jaeger.techx-observability.svc.cluster.local
 
   postgresql:
+    enabled: false
     command:
       - docker-entrypoint.sh
       - postgres
       - -c
       - wal_level=logical
+
+  kafka:
+    enabled: false
+
+  valkey-cart:
+    enabled: false
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
@@ -102,26 +113,34 @@ rollouts:
 bastionPortalAccess: { enabled: true }
 
 postgresqlMigrationBridge:
-  enabled: true
+  enabled: false
 
 managedData:
-  # CDO08-REL-15: PostgreSQL RDS cutover gate.
-  # Keep this PR unmerged until writer freeze, DMS CDC catch-up, and strict parity pass.
   enabled: true
   postgresql:
     enabled: true
     secretName: rds-postgres-secret
+  valkey:
+    enabled: true
+    secretName: elasticache-valkey-secret
+  kafka:
+    enabled: true
+    secretName: msk-kafka-secret
+    # CDO08-REL-17: complete Kafka/MSK app cutover. checkout is the producer;
+    # accounting and fraud-detection are consumers that must read from MSK before
+    # the self-hosted kafka pod can be decommissioned.
+    services: [checkout, accounting, fraud-detection]
 
 # CDO08-REL-17: start Kafka self-hosted -> MSK live replication with Strimzi MirrorMaker2.
 # This does not cut over checkout/accounting/fraud-detection traffic.
 mirrormaker2:
-  enabled: true
+  enabled: false
   version: 4.2.1
   targetCluster:
     bootstrapServers: "b-2.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096,b-1.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096"
 
 valkeyMigrationBridge:
-  # CDO08-REL-16 BƯỚC 1.2: temporary internal NLB bridge so AWS ElastiCache Online
-  # Migration can reach the self-hosted valkey-cart source. Disable + cleanup after
-  # cutover is stable (BƯỚC 3.8 / 08-cleanup.sh) - do not leave enabled long-term.
-  enabled: true
+  # CDO08-REL-16 BƯỚC 3.8: migration completed and cutover confirmed stable on
+  # ElastiCache - the replication link is already severed by complete-migration,
+  # so this bridge no longer serves any purpose. Disabled per 08-cleanup.sh.
+  enabled: false
