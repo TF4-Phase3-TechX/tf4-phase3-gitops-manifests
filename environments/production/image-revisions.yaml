@@ -68,8 +68,8 @@ components:
       digest: "sha256:c0a0caec691cf7bf15580fa8d647ed42b9e495a42a4907c080569da3038a0a7a"
   recommendation:
     imageOverride:
-      tag: "8340af1-recommendation"
-      digest: "sha256:7ed01aa3219141107201be32c389125d4a15e029b4fbda849db330a04a3d82f6"
+      tag: "bc29c93-recommendation"
+      digest: "sha256:c520a5e1e6b2559f76e9ab9b26393203af9f46e4068cc20993026fb946dae53e"
   shipping:
     imageOverride:
       tag: "8340af1-shipping"
