@@ -5,8 +5,8 @@ components:
       digest: "sha256:2989ea712e8a441acc75c1f6aefa4e6c1fbaf3a46347d6007b72b46d90e167d3"
   ad:
     imageOverride:
-      tag: "8340af1-ad"
-      digest: "sha256:e6b646f2b595ee3f26fb27c6eab7502285561e93374aead17e57578ef1b63163"
+      tag: "b0374a9-ad"
+      digest: "sha256:78ee0b4c907d2e23cc18ad6525416919e390fa7ad13ff2c3aa9d91837a6e3c18"
   cart:
     imageOverride:
       tag: "0f983db-cart"
