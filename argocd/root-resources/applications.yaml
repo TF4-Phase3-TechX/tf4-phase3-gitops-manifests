@@ -31,19 +31,19 @@ spec:
           container:
             resources:
               requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
                 cpu: 100m
                 memory: 128Mi
-              limits:
-                cpu: 500m
-                memory: 512Mi
           initContainer:
             resources:
               requests:
                 cpu: 10m
-                memory: 64Mi
+                memory: 32Mi
               limits:
-                cpu: 100m
-                memory: 256Mi
+                cpu: 50m
+                memory: 64Mi
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kyverno
