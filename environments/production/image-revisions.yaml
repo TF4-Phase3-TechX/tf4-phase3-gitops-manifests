@@ -21,8 +21,8 @@ components:
       digest: "sha256:663bf6d56564e82cd767233bb70c45df6818a18d64781a7dc37732a4247e791c"
   email:
     imageOverride:
-      tag: "8340af1-email"
-      digest: "sha256:ae29b7bd26888637d652b0fe594a8ebd2df8d3cbee1df613f4061df5d9f2f85c"
+      tag: "694654e-email"
+      digest: "sha256:f7512b6258ebbb471e69ca33ec6531d66221e0c00dba550379b2fb54ede3c1e0"
   fraud-detection:
     imageOverride:
       tag: "c553182-fraud-detection"
@@ -37,8 +37,8 @@ components:
       digest: "sha256:7a2d03dfe155c959febc5bb866a225fd32540ccfb0bc708d2ec6ab3c64111fee"
   image-provider:
     imageOverride:
-      tag: "8340af1-image-provider"
-      digest: "sha256:b4d954db0d5f87279451eca5c1f2a4bf4a56e8c35a658692da3a79857724df09"
+      tag: "694654e-image-provider"
+      digest: "sha256:82b17baefb20ebd27f046e0351eebd625daa0015e92b8f4fac87c68eb792ef4b"
   kafka:
     imageOverride:
       tag: "8340af1-kafka"
