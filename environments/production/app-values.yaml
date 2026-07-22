@@ -119,7 +119,10 @@ managedData:
   kafka:
     enabled: true
     secretName: msk-kafka-secret
-    services: [checkout]
+    # CDO08-REL-17: complete Kafka/MSK app cutover. checkout is the producer;
+    # accounting and fraud-detection are consumers that must read from MSK before
+    # the self-hosted kafka pod can be decommissioned.
+    services: [checkout, accounting, fraud-detection]
 
 # CDO08-REL-17: start Kafka self-hosted -> MSK live replication with Strimzi MirrorMaker2.
 # This does not cut over checkout/accounting/fraud-detection traffic.
