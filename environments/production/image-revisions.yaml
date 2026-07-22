@@ -29,8 +29,8 @@ components:
       digest: "sha256:05162e17b99e9e61f9a61b630442e9f52baf6120eb739f745726335ac18ea554"
   frontend:
     imageOverride:
-      tag: "0eb91f9-frontend"
-      digest: "sha256:93101dc5898b74713e240d44a730de147e76cc03bfc034f066685212c48d0bd2"
+      tag: "d3f6ec8-frontend"
+      digest: "sha256:9c104c9d40883bb56b8bb62bd304eaf10324e001b0402ab4ec417ce225d926fe"
   frontend-proxy:
     imageOverride:
       tag: "8340af1-frontend-proxy"
