@@ -84,6 +84,7 @@ kubectl logs -n techx-tf4 orders-mirrormaker2-mirrormaker2-0 --since=2m --tail=8
 
 Expected:
 - SEC-21 policies exist.
+- `sec21-allow-managed-msk-egress` exists and allows only checkout/accounting/fraud-detection to private MSK subnets on TCP/9096.
 - All deployments remain Ready.
 - Cart rollout remains Available.
 - MirrorMaker2 logs continue to show `/health` and connector API `200`, plus offset commits.
