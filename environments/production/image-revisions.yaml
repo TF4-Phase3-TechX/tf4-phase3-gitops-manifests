@@ -1,4 +1,8 @@
 components:
+  aiops:
+    imageOverride:
+      tag: "66ed32b-aiops"
+      digest: "sha256:7eff9e53c0ba609a2b421a33778b5bcf8ef98a429dd846e354c53ccf4fa6fb0d"
   accounting:
     imageOverride:
       tag: "c553182-accounting"
@@ -13,12 +17,12 @@ components:
       digest: "sha256:4b6d4958d2fdbeb4862b5d83965d754a3b4551b3c9fd44e58eda2f350374ce28"
   checkout:
     imageOverride:
-      tag: "c646c2b-checkout"
-      digest: "sha256:50e941f0e8b51b68865d69c3301deeb12b4ae18e1cc9a324403952612f27d2db"
+      tag: "1e16fa0-checkout"
+      digest: "sha256:a24adc70f8c2b800cd3b5f17a1e4fe824c8c3b0be1d795f927efbf54e1f5a6c8"
   currency:
     imageOverride:
-      tag: "a930936-currency"
-      digest: "sha256:663bf6d56564e82cd767233bb70c45df6818a18d64781a7dc37732a4247e791c"
+      tag: "1e16fa0-currency"
+      digest: "sha256:5c5b8ebec7a1ec4f92f134c8c49eb9b3e83ab5da7f4a499291135ae26ff3249d"
   email:
     imageOverride:
       tag: "694654e-email"
@@ -29,12 +33,12 @@ components:
       digest: "sha256:05162e17b99e9e61f9a61b630442e9f52baf6120eb739f745726335ac18ea554"
   frontend:
     imageOverride:
-      tag: "0eb91f9-frontend"
-      digest: "sha256:93101dc5898b74713e240d44a730de147e76cc03bfc034f066685212c48d0bd2"
+      tag: "a08f059-frontend"
+      digest: "sha256:e658b476017ef03154e449ebde46760e0f4a1f6206f58e4e3bcef2b807b8f4f4"
   frontend-proxy:
     imageOverride:
-      tag: "8340af1-frontend-proxy"
-      digest: "sha256:7a2d03dfe155c959febc5bb866a225fd32540ccfb0bc708d2ec6ab3c64111fee"
+      tag: "a08f059-frontend-proxy"
+      digest: "sha256:359e4075705fd6156a9d6097545c21878ce5cab1e3418fbf82b19c8f22da666a"
   image-provider:
     imageOverride:
       tag: "694654e-image-provider"
@@ -44,33 +48,33 @@ components:
       tag: "8340af1-kafka"
   llm:
     imageOverride:
-      tag: "8340af1-llm"
-      digest: "sha256:92bdde8f912c3e773b0b5908e3c17a776c49258e4fab5fdd6df905b723d21fe6"
+      tag: "a08f059-llm"
+      digest: "sha256:e62a757a42ba7bb144cb109549e4b936301faeead6292c6fa4952190546f1142"
   load-generator:
     imageOverride:
       tag: "8e8dc9f-retry1-load-generator"
       digest: "sha256:79f945f0cca88b0c598f3612a3f947e61393e621544aa7fa1b687620391c9f8b"
   payment:
     imageOverride:
-      tag: "8340af1-payment"
-      digest: "sha256:3ec5571732aaff07505cb2aa735100e20815279067c4a85448aa79da476abd7e"
+      tag: "a08f059-payment"
+      digest: "sha256:d566391fa1545bece48734badf83c7e3fd0199f8a44c3bd2c9ce91619dd92aa2"
   product-catalog:
     imageOverride:
-      tag: "8340af1-product-catalog"
-      digest: "sha256:e0c6a86a65e7b872e77a2f1f1ab16d7dc9aa7ba0741de6e1ac95fec964921482"
+      tag: "a08f059-product-catalog"
+      digest: "sha256:869334f8a847a0dd58388aa395e1b343d49e6314676817b681508a97c1213297"
   product-reviews:
     imageOverride:
-      tag: "d1c4632-product-reviews"
-      digest: "sha256:f8a938d6822a1e689dde1f8df01123635dcbd68bea32fa681ff8e439061aaa92"
+      tag: "d3f6ec8-product-reviews"
+      digest: "sha256:fdd93f87d4560b2789731ae31ee2a6b4df69851be66cd8d5c05f4828473a64c5"
   quote:
     imageOverride:
-      tag: "8340af1-quote"
-      digest: "sha256:c0a0caec691cf7bf15580fa8d647ed42b9e495a42a4907c080569da3038a0a7a"
+      tag: "a08f059-quote"
+      digest: "sha256:daea9b3c48d363f7849693708c679d49ac739add2817d73ea7afc4c1cb6bbb2f"
   recommendation:
     imageOverride:
       tag: "bc29c93-recommendation"
       digest: "sha256:c520a5e1e6b2559f76e9ab9b26393203af9f46e4068cc20993026fb946dae53e"
   shipping:
     imageOverride:
-      tag: "8340af1-shipping"
-      digest: "sha256:496bbb45b40a8750e5928e3fb94b872055caaf01e0232667606d84e7591a95dc"
+      tag: "a08f059-shipping"
+      digest: "sha256:a5dd329eeabc95d26a5c561930ba250ea9d7957f498d45c3f6880237a4b1110e"

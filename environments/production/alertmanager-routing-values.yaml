@@ -5,36 +5,139 @@ prometheus:
       global:
         resolve_timeout: 5m
         smtp_smarthost: 'smtp.gmail.com:587'
-        smtp_from: 'tf4-on-call-email@gmail.com'
-        smtp_auth_username: 'tf4-on-call-email@gmail.com'
+        smtp_from: 'tf4.audit.alerts@gmail.com'
+        smtp_auth_username: 'tf4.audit.alerts@gmail.com'
         smtp_auth_password_file: '/etc/alertmanager/secrets/smtp-password'
         smtp_require_tls: true
       route:
-        group_by: ['alertname', 'service']
+        group_by: ['alertname', 'severity']
         group_wait: 10s
         group_interval: 10s
         repeat_interval: 1h
-        receiver: 'combined-notifications'
+        receiver: 'email-notifications'
         routes:
-        - receiver: 'aiops-oncall'
-          matchers:
-          - 'component="aiops-detector"'
+        - matchers:
+          - severity="critical"
+          receiver: 'critical-slack-notifications'
+          repeat_interval: 30m
+        - matchers:
+          - severity="warning"
+          receiver: 'email-notifications'
+          repeat_interval: 2h
       receivers:
-      - name: 'combined-notifications'
+      - name: 'critical-slack-notifications'
+        # Temporarily pause Gmail SMTP notifications while the account cools down
+        # from repeated auth throttling. Keep this block for quick rollback.
+        # email_configs:
+        # - to: 'tf4-audit-oncall@googlegroups.com'
+        #   from: 'tf4.audit.alerts@gmail.com'
+        #   smarthost: 'smtp.gmail.com:587'
+        #   auth_username: 'tf4.audit.alerts@gmail.com'
+        #   auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+        #   require_tls: true
+        #   send_resolved: true
         slack_configs:
-        - channel: '#tf4-alerts'
-          api_url_file: /etc/alertmanager/slack/webhook-url
+        - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
-        email_configs:
-        - to: 'buithanhnghia@dtu.edu.vn'
-          send_resolved: true
-        - to: 'vanphutin2902@gmail.com'
-          send_resolved: true
-        - to: 'ngonguyentruongan2907@gmail.com'
-          send_resolved: true
-      - name: 'aiops-oncall'
+          color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+          title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}{{ if .CommonLabels.severity }} | {{ .CommonLabels.severity }}{{ end }}'
+          text: |-
+            {{ range .Alerts }}
+            *Alert:* {{ .Labels.alertname }}
+            *Started:* {{ .StartsAt.Format "2006-01-02 15:04:05 UTC" }}
+            {{- if .Labels.severity }}
+            *Severity:* `{{ .Labels.severity }}`
+            {{- end }}
+            {{- if .Labels.service }}
+            *Service:* `{{ .Labels.service }}`
+            {{- end }}
+            {{- if .Labels.namespace }}
+            *Namespace:* `{{ .Labels.namespace }}`
+            {{- else if .Labels.k8s_namespace_name }}
+            *Namespace:* `{{ .Labels.k8s_namespace_name }}`
+            {{- end }}
+            {{- if .Labels.pod }}
+            *Pod:* `{{ .Labels.pod }}`
+            {{- else if .Labels.k8s_pod_name }}
+            *Pod:* `{{ .Labels.k8s_pod_name }}`
+            {{- end }}
+            {{- if .Annotations.summary }}
+            *Summary:* {{ .Annotations.summary }}
+            {{- end }}
+            {{- if .Annotations.description }}
+            *Description:* {{ .Annotations.description }}
+            {{- end }}
+            {{- if eq .Labels.alertname "StorefrontP95High" }}
+            *Action:* Check frontend/frontend-proxy latency, pod restarts, upstream 5xx, and recent deploys.
+            {{- else if eq .Labels.alertname "FrontendErrorRateHigh" }}
+            *Action:* Check frontend error logs, ingress/proxy 5xx, upstream health, and recent deploys.
+            {{- else if eq .Labels.alertname "CheckoutSuccessRateLow" }}
+            *Action:* Check checkout, cart, payment dependencies, request error breakdown, and recent deploys.
+            {{- else if eq .Labels.alertname "BrowseSuccessRateLow" }}
+            *Action:* Check frontend browse routes, product-catalog availability, 5xx rates, and recent deploys.
+            {{- else if eq .Labels.alertname "PaymentSuccessRateLow" }}
+            *Action:* Check payment service health, checkout dependency errors, and payment latency/error logs.
+            {{- else if eq .Labels.alertname "LoadGeneratorTrafficOutsideTestWindow" }}
+            *Action:* Confirm whether a documented load test is running; silence only for an approved test window.
+            {{- else if eq .Labels.alertname "PodRestartBurst" }}
+            *Action:* Inspect pod logs, restart reason, recent deploys, resource limits, and node pressure.
+            {{- else }}
+            *Action:* Open the runbook, inspect affected service health, recent deploys, pod restarts, and error logs.
+            {{- end }}
+            {{- if .Annotations.runbook_url }}
+            *Runbook:* {{ .Annotations.runbook_url }}
+            {{- end }}
+            {{ end }}
+      - name: 'email-notifications'
         slack_configs:
-        - channel: '#tf4-alerts'
-          api_url_file: /etc/alertmanager/slack/webhook-url
+        - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
-
+          color: '{{ if eq .Status "firing" }}warning{{ else }}good{{ end }}'
+          title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}{{ if .CommonLabels.severity }} | {{ .CommonLabels.severity }}{{ end }}'
+          text: |-
+            {{ range .Alerts }}
+            *Alert:* {{ .Labels.alertname }}
+            *Started:* {{ .StartsAt.Format "2006-01-02 15:04:05 UTC" }}
+            {{- if .Labels.severity }}
+            *Severity:* `{{ .Labels.severity }}`
+            {{- end }}
+            {{- if .Labels.service }}
+            *Service:* `{{ .Labels.service }}`
+            {{- end }}
+            {{- if .Labels.namespace }}
+            *Namespace:* `{{ .Labels.namespace }}`
+            {{- else if .Labels.k8s_namespace_name }}
+            *Namespace:* `{{ .Labels.k8s_namespace_name }}`
+            {{- end }}
+            {{- if .Labels.pod }}
+            *Pod:* `{{ .Labels.pod }}`
+            {{- else if .Labels.k8s_pod_name }}
+            *Pod:* `{{ .Labels.k8s_pod_name }}`
+            {{- end }}
+            {{- if .Annotations.summary }}
+            *Summary:* {{ .Annotations.summary }}
+            {{- end }}
+            {{- if .Annotations.description }}
+            *Description:* {{ .Annotations.description }}
+            {{- end }}
+            {{- if eq .Labels.alertname "StorefrontP95High" }}
+            *Action:* Check frontend/frontend-proxy latency, pod restarts, upstream 5xx, and recent deploys.
+            {{- else if eq .Labels.alertname "FrontendErrorRateHigh" }}
+            *Action:* Check frontend error logs, ingress/proxy 5xx, upstream health, and recent deploys.
+            {{- else if eq .Labels.alertname "CheckoutSuccessRateLow" }}
+            *Action:* Check checkout, cart, payment dependencies, request error breakdown, and recent deploys.
+            {{- else if eq .Labels.alertname "BrowseSuccessRateLow" }}
+            *Action:* Check frontend browse routes, product-catalog availability, 5xx rates, and recent deploys.
+            {{- else if eq .Labels.alertname "PaymentSuccessRateLow" }}
+            *Action:* Check payment service health, checkout dependency errors, and payment latency/error logs.
+            {{- else if eq .Labels.alertname "LoadGeneratorTrafficOutsideTestWindow" }}
+            *Action:* Confirm whether a documented load test is running; silence only for an approved test window.
+            {{- else if eq .Labels.alertname "PodRestartBurst" }}
+            *Action:* Inspect pod logs, restart reason, recent deploys, resource limits, and node pressure.
+            {{- else }}
+            *Action:* Open the runbook, inspect affected service health, recent deploys, pod restarts, and error logs.
+            {{- end }}
+            {{- if .Annotations.runbook_url }}
+            *Runbook:* {{ .Annotations.runbook_url }}
+            {{- end }}
+            {{ end }}
