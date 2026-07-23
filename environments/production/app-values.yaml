@@ -27,6 +27,8 @@ components:
         value: dry-run
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
         value: "false"
+      - name: OPENSEARCH_URL
+        value: http://opensearch.techx-observability.svc.cluster.local:9200
 
   # CDO08-REL-17: enable Argo Rollouts Blue-Green for checkout only — the only
   # Kafka cutover service with a real inbound Service. accounting/fraud-detection
