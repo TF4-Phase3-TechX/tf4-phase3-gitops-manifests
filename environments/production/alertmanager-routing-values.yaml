@@ -28,3 +28,27 @@ prometheus:
         slack_configs:
         - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
+          color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+          title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}{{ if .CommonLabels.severity }} | {{ .CommonLabels.severity }}{{ end }}'
+          text: |-
+            {{ range .Alerts }}
+            *Alert:* {{ .Labels.alertname }}
+            {{- if .Labels.severity }}
+            *Severity:* `{{ .Labels.severity }}`
+            {{- end }}
+            {{- if .Labels.namespace }}
+            *Namespace:* `{{ .Labels.namespace }}`
+            {{- end }}
+            {{- if .Labels.service }}
+            *Service:* `{{ .Labels.service }}`
+            {{- end }}
+            {{- if .Labels.pod }}
+            *Pod:* `{{ .Labels.pod }}`
+            {{- end }}
+            {{- if .Annotations.summary }}
+            *Summary:* {{ .Annotations.summary }}
+            {{- end }}
+            {{- if .Annotations.description }}
+            *Description:* {{ .Annotations.description }}
+            {{- end }}
+            {{ end }}
