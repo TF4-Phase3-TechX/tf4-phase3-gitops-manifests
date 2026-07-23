@@ -30,26 +30,23 @@ components:
       - name: OPENSEARCH_URL
         value: http://opensearch.techx-observability.svc.cluster.local:9200
 
-  # CDO08-REL-17: enable Argo Rollouts Blue-Green for checkout only — the only
-  # Kafka cutover service with a real inbound Service. accounting/fraud-detection
-  # are pure Kafka consumers (no Service) and use strategy: Recreate instead
-  # (set in the chart directly, no GitOps flag needed) — see
-  # KAFKA-CUTOVER-RETRY-RUNBOOK.md Mục B.
+  # CDO08-REL-17 Blue-Green cutover window is over; useRollout reverted to the
+  # chart default (false, plain Deployment/RollingUpdate) — see
+  # docs/audit/postmortems/incident-20260723-image-pruning-cve-gate-and-flagd-sync.md.
+  # Blue-Green's manual `promote` step was a direct contributor to that
+  # incident's recovery time (new pods were healthy but Service traffic stayed
+  # pinned to the dead revision until promoted by hand).
   checkout:
-    useRollout: true
+    useRollout: false
 
+  # CDO08-REL-16 Blue-Green cutover window is over; useRollout reverted to the
+  # chart default (false, plain Deployment/RollingUpdate) — same rationale as
+  # checkout above.
+  # CDO08-SEC-13/REL-16: endpoint/TLS/password now come from
+  # elasticache-valkey-secret through managedData.valkey below, not plaintext
+  # envOverrides.
   cart:
-    # CDO08-REL-16 BƯỚC 3.1: cutover to ElastiCache via Blue-Green Rollout (paused
-    # until 06-promote-rollout.sh). Requires top-level rollouts.enabled: true below.
-    # rolloutStrategy set explicitly (not just relying on the chart default) since
-    # the ArgoCD-pinned chart revision predates that default existing for cart.
-    # CDO08-SEC-13/REL-16: endpoint/TLS/password now come from
-    # elasticache-valkey-secret through managedData.valkey below, not plaintext
-    # envOverrides.
-    useRollout: true
-    rolloutStrategy:
-      blueGreen:
-        autoPromotionEnabled: false
+    useRollout: false
 
   load-generator:
     envOverrides:
