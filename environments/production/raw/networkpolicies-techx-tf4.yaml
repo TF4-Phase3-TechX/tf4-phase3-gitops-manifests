@@ -761,7 +761,7 @@ metadata:
   annotations:
     cdo08.techx.io/external-egress-owner: "CDO08-SEC-21"
     cdo08.techx.io/external-egress-expiry: "2026-08-21"
-    cdo08.techx.io/external-egress-reason: "Product-reviews uses EKS Pod Identity to obtain Bedrock credentials; allow only the node-local credential endpoint on TCP/80, not broad internet egress."
+    cdo08.techx.io/external-egress-reason: "Product-reviews uses EKS Pod Identity for Bedrock and the approved private ElastiCache/Valkey path for Copilot state; allow only those bounded destinations, not broad internet egress."
     cdo08.techx.io/bedrock-egress-status: "Bedrock runtime FQDN egress remains deferred; standard Kubernetes NetworkPolicy cannot safely express AWS Bedrock FQDN allowlist."
 spec:
   podSelector:
@@ -792,6 +792,17 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: valkey-cart
+        - ipBlock:
+            cidr: 10.0.10.0/24
+        - ipBlock:
+            cidr: 10.0.11.0/24
+      ports:
+        - protocol: TCP
+          port: 6379
     - to:
         - podSelector:
             matchLabels:
