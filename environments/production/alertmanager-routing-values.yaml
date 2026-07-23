@@ -26,16 +26,6 @@ prometheus:
           repeat_interval: 2h
       receivers:
       - name: 'critical-slack-notifications'
-        # Temporarily pause Gmail SMTP notifications while the account cools down
-        # from repeated auth throttling. Keep this block for quick rollback.
-        # email_configs:
-        # - to: 'tf4-audit-oncall@googlegroups.com'
-        #   from: 'tf4.audit.alerts@gmail.com'
-        #   smarthost: 'smtp.gmail.com:587'
-        #   auth_username: 'tf4.audit.alerts@gmail.com'
-        #   auth_password_file: '/etc/alertmanager/secrets/smtp-password'
-        #   require_tls: true
-        #   send_resolved: true
         slack_configs:
         - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
@@ -89,6 +79,14 @@ prometheus:
             {{- end }}
             {{ end }}
       - name: 'email-notifications'
+        email_configs:
+        - to: 'tf4-audit-oncall@googlegroups.com'
+          from: 'tf4.audit.alerts@gmail.com'
+          smarthost: 'smtp.gmail.com:587'
+          auth_username: 'tf4.audit.alerts@gmail.com'
+          auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+          require_tls: true
+          send_resolved: true
         slack_configs:
         - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
