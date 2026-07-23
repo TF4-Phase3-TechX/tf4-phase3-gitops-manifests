@@ -4,6 +4,11 @@ prometheus:
     config:
       global:
         resolve_timeout: 5m
+        smtp_smarthost: 'smtp.gmail.com:587'
+        smtp_from: 'tf4.audit.alerts@gmail.com'
+        smtp_auth_username: 'tf4.audit.alerts@gmail.com'
+        smtp_auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+        smtp_require_tls: true
       route:
         group_by: ['alertname']
         group_wait: 10s
@@ -13,12 +18,13 @@ prometheus:
       receivers:
       - name: 'email-notifications'
         email_configs:
-        - to: 'recipient@techx.corp'
-          from: 'alertmanager@techx.corp'
-          smarthost: 'smtp.mailtrap.io:2525'
-          auth_username: 'api'
+        - to: 'tf4-audit-oncall@googlegroups.com'
+          from: 'tf4.audit.alerts@gmail.com'
+          smarthost: 'smtp.gmail.com:587'
+          auth_username: 'tf4.audit.alerts@gmail.com'
           auth_password_file: '/etc/alertmanager/secrets/smtp-password'
+          require_tls: true
+          send_resolved: true
         slack_configs:
         - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
-
