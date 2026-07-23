@@ -1,6 +1,7 @@
 # Observability dùng chung: bật 5 subchart, tắt TẤT CẢ app component.
 opentelemetry-collector: { enabled: true }
 jaeger: { enabled: true }
+
 prometheus:
   enabled: true
   server:
@@ -11,11 +12,14 @@ prometheus:
       limits:
         cpu: 1000m
         memory: 1Gi
+
 grafana: { enabled: true }
+
 opensearch:
   enabled: true
   otelLogsLifecycle:
     enabled: true
+
 metrics-server:
   enabled: true
   fullnameOverride: metrics-server
@@ -47,4 +51,14 @@ components:
   postgresql: { enabled: false }
   valkey-cart: { enabled: false }
 
-bastionPortalAccess: { enabled: true }
+bastionPortalAccess:
+  enabled: true
+
+cloudflareAccess:
+  enabled: true
+  namespace: cloudflare-access
+  createNamespace: false
+  replicas: 2
+  tokenSecret:
+    name: cloudflare-tunnel-token
+    key: token
