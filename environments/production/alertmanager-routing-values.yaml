@@ -14,7 +14,7 @@ prometheus:
         group_wait: 10s
         group_interval: 10s
         repeat_interval: 1h
-        receiver: 'warning-slack-notifications'
+        receiver: 'email-notifications'
         routes:
         - matchers:
           - severity="critical"
@@ -22,7 +22,7 @@ prometheus:
           repeat_interval: 30m
         - matchers:
           - severity="warning"
-          receiver: 'warning-slack-notifications'
+          receiver: 'email-notifications'
           repeat_interval: 2h
       receivers:
       - name: 'critical-slack-notifications'
@@ -88,7 +88,7 @@ prometheus:
             *Runbook:* {{ .Annotations.runbook_url }}
             {{- end }}
             {{ end }}
-      - name: 'warning-slack-notifications'
+      - name: 'email-notifications'
         slack_configs:
         - api_url_file: /etc/alertmanager/slack/webhook-url
           send_resolved: true
