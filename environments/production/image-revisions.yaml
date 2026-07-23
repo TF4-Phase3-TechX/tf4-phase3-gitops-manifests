@@ -17,8 +17,8 @@ components:
       digest: "sha256:707c8b13f74aa4c0c17526b7c2bb33ea45cc9fab5416f90590b90176e820b1e4"
   checkout:
     imageOverride:
-      tag: "496abcd-checkout"
-      digest: "sha256:da4a21bde3d8d2bc7066a42db87a05f52a0a3233dc73ec41b9544ad0672de0e3"
+      tag: "14da184-checkout"
+      digest: "sha256:5c5b977806c8d6b40455d2f0aa7ca00f4ca53a64a4b7f69cf79e2da6645a8bdd"
   currency:
     imageOverride:
       tag: "fe3bd7e-currency"
@@ -33,8 +33,8 @@ components:
       digest: "sha256:51390f2a755033e805f2d58767330b8c1721a33228896b93879ff150efc5c70d"
   frontend:
     imageOverride:
-      tag: "fe3bd7e-frontend"
-      digest: "sha256:f1ea7e61d4ec1a37840577e6c29fb6362c14ef3790b2909efd3215980455ad07"
+      tag: "14da184-frontend"
+      digest: "sha256:bcdc82de808f4dbd55400a6fffe54630213f66aab8c53f7d83bc3c59a3ade81b"
   frontend-proxy:
     imageOverride:
       tag: "a08f059-frontend-proxy"
