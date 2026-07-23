@@ -5,16 +5,16 @@ components:
       digest: "sha256:7eff9e53c0ba609a2b421a33778b5bcf8ef98a429dd846e354c53ccf4fa6fb0d"
   accounting:
     imageOverride:
-      tag: "c553182-accounting"
-      digest: "sha256:2989ea712e8a441acc75c1f6aefa4e6c1fbaf3a46347d6007b72b46d90e167d3"
+      tag: "b1ddab3-accounting"
+      digest: "sha256:c9a369992accd76f498e421a45a6f038b7425158217a73b3a493950097beb9db"
   ad:
     imageOverride:
       tag: "036ab41-ad"
       digest: "sha256:dc18b1f321fa83583a2eb9f35032704ec67f8228588e18e05313ad5b279eb8ca"
   cart:
     imageOverride:
-      tag: "0f983db-cart"
-      digest: "sha256:4b6d4958d2fdbeb4862b5d83965d754a3b4551b3c9fd44e58eda2f350374ce28"
+      tag: "b1ddab3-cart"
+      digest: "sha256:707c8b13f74aa4c0c17526b7c2bb33ea45cc9fab5416f90590b90176e820b1e4"
   checkout:
     imageOverride:
       tag: "496abcd-checkout"
