@@ -64,8 +64,8 @@ components:
       digest: "sha256:869334f8a847a0dd58388aa395e1b343d49e6314676817b681508a97c1213297"
   product-reviews:
     imageOverride:
-      tag: "d3f6ec8-product-reviews"
-      digest: "sha256:fdd93f87d4560b2789731ae31ee2a6b4df69851be66cd8d5c05f4828473a64c5"
+      tag: "4cba59d-product-reviews"
+      digest: "sha256:8debecccee73b6f89b9887d7bd2b5de90e9272c025d801bc6e1b60840fd53c48"
   quote:
     imageOverride:
       tag: "a08f059-quote"
