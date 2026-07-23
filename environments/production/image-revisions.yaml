@@ -9,8 +9,8 @@ components:
       digest: "sha256:2989ea712e8a441acc75c1f6aefa4e6c1fbaf3a46347d6007b72b46d90e167d3"
   ad:
     imageOverride:
-      tag: "b0374a9-ad"
-      digest: "sha256:78ee0b4c907d2e23cc18ad6525416919e390fa7ad13ff2c3aa9d91837a6e3c18"
+      tag: "036ab41-ad"
+      digest: "sha256:dc18b1f321fa83583a2eb9f35032704ec67f8228588e18e05313ad5b279eb8ca"
   cart:
     imageOverride:
       tag: "0f983db-cart"
@@ -29,8 +29,8 @@ components:
       digest: "sha256:f7512b6258ebbb471e69ca33ec6531d66221e0c00dba550379b2fb54ede3c1e0"
   fraud-detection:
     imageOverride:
-      tag: "c553182-fraud-detection"
-      digest: "sha256:05162e17b99e9e61f9a61b630442e9f52baf6120eb739f745726335ac18ea554"
+      tag: "036ab41-fraud-detection"
+      digest: "sha256:51390f2a755033e805f2d58767330b8c1721a33228896b93879ff150efc5c70d"
   frontend:
     imageOverride:
       tag: "fe3bd7e-frontend"
