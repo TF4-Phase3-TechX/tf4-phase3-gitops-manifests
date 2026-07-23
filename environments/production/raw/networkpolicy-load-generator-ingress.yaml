@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sec21-allow-load-generator-ingress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/part-of: cdo08-sec21
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: load-generator
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cloudflare-access
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: cloudflared
+      ports:
+        - protocol: TCP
+          port: 8089
