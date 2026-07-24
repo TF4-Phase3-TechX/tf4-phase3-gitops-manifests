@@ -55,6 +55,8 @@ components:
 
   frontend-proxy:
     envOverrides:
+      - name: FRONTEND_HOST
+        value: frontend-headless
       - name: GRAFANA_HOST
         value: grafana.techx-observability.svc.cluster.local
       - name: JAEGER_HOST
