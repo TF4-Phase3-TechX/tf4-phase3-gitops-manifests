@@ -25,7 +25,7 @@ components:
       - name: PRODUCT_CATALOG_ADDR
         value: dns:///product-catalog-headless:8080
 
-  # TF4AIO-63 controlled availability drill. Keep desired replicas at one so
+  # Mandate 15 controlled availability drill. Keep desired replicas at one so
   # AIOps observes desired=1/ready=0 as DOWN; scaling to zero is intentionally
   # classified as IDLE and would not exercise the on-call path.
   #
