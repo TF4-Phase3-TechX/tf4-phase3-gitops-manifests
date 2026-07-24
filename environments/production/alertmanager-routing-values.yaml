@@ -10,7 +10,11 @@ prometheus:
         smtp_auth_password_file: '/etc/alertmanager/secrets/smtp-password'
         smtp_require_tls: true
       route:
-        group_by: ['alertname', 'severity']
+        # Keep each AIOps service/incident lifecycle independent so that one
+        # still-firing incident cannot hide another incident's resolved notice.
+        # Non-AIOps alerts without these labels continue to group by the labels
+        # they do provide.
+        group_by: ['alertname', 'severity', 'incident_type', 'service']
         group_wait: 10s
         group_interval: 10s
         repeat_interval: 1h
