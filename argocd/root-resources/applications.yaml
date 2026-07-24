@@ -179,7 +179,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: 31b9b4abf46bc6eb8f8c3da606110f86ca8c5118
+      targetRevision: 628b66e196c4f575c2b0be091ba3adf1047522e5
       path: techx-corp-chart
       ref: chart-source
       helm:
@@ -214,7 +214,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: 31b9b4abf46bc6eb8f8c3da606110f86ca8c5118
+      targetRevision: 628b66e196c4f575c2b0be091ba3adf1047522e5
       path: techx-corp-chart
       ref: chart-source
       helm:
