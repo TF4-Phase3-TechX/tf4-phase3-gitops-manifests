@@ -109,6 +109,8 @@ metadata:
   namespace: techx-tf4
   labels:
     app.kubernetes.io/part-of: cdo08-sec21
+  annotations:
+    cdo08.techx.io/aiops-apiserver-egress: "Read-only Deployment availability; restricted to the cluster Kubernetes Service /32 on TCP/443."
 spec:
   podSelector:
     matchLabels:
@@ -166,6 +168,12 @@ spec:
           port: 80
         - protocol: TCP
           port: 3000
+    - to:
+        - ipBlock:
+            cidr: 172.20.0.1/32
+      ports:
+        - protocol: TCP
+          port: 443
 
 ---
 apiVersion: networking.k8s.io/v1
