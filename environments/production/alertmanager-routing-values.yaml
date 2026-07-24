@@ -16,6 +16,22 @@ prometheus:
         repeat_interval: 1h
         receiver: 'email-notifications'
         routes:
+        # Keep each AIOps service/incident lifecycle independent so that one
+        # still-firing incident cannot hide another incident's resolved notice.
+        # This nested route leaves every non-AIOps team's grouping unchanged.
+        - matchers:
+          - alertname="AIOpsIncidentDetected"
+          group_by: ['alertname', 'severity', 'incident_type', 'service']
+          receiver: 'email-notifications'
+          routes:
+          - matchers:
+            - severity="critical"
+            receiver: 'critical-slack-notifications'
+            repeat_interval: 30m
+          - matchers:
+            - severity="warning"
+            receiver: 'email-notifications'
+            repeat_interval: 2h
         - matchers:
           - severity="critical"
           receiver: 'critical-slack-notifications'
