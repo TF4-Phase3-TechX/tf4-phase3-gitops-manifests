@@ -33,8 +33,8 @@ components:
       digest: "sha256:51390f2a755033e805f2d58767330b8c1721a33228896b93879ff150efc5c70d"
   frontend:
     imageOverride:
-      tag: "14da184-frontend"
-      digest: "sha256:bcdc82de808f4dbd55400a6fffe54630213f66aab8c53f7d83bc3c59a3ade81b"
+      tag: "b536a75-frontend"
+      digest: "sha256:d4e50f027b9ad0fe369034aa543a8ab5442ddbdadde0fda77642df2bcfa1fd2e"
   frontend-proxy:
     imageOverride:
       tag: "a08f059-frontend-proxy"
