@@ -20,6 +20,11 @@ default:
       value: otel-collector.techx-observability.svc.cluster.local
 
 components:
+  frontend:
+    envOverrides:
+      - name: PRODUCT_CATALOG_ADDR
+        value: dns:///product-catalog-headless:8080
+
   aiops:
     enabled: true
     envOverrides:
