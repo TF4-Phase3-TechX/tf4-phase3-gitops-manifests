@@ -25,6 +25,26 @@ components:
       - name: PRODUCT_CATALOG_ADDR
         value: dns:///product-catalog-headless:8080
 
+  # Mandate 7b/15 controlled availability re-drill. Keep desired replicas at
+  # one so AIOps observes desired=1/ready=0 as DOWN. This rerun verifies the
+  # per-service FIRING -> RESOLVED Slack lifecycle introduced by GitOps #163.
+  #
+  # Safety boundary:
+  # - AIOps remediation remains dry-run/autonomous=false.
+  # - Revert this entire llm block immediately after FIRING is observed.
+  llm:
+    strategy:
+      type: Recreate
+    readinessProbe:
+      httpGet:
+        path: /__tf4aio_controlled_drill_not_ready
+        port: 8000
+      initialDelaySeconds: 1
+      periodSeconds: 2
+      timeoutSeconds: 1
+      failureThreshold: 1
+      successThreshold: 1
+
   aiops:
     enabled: true
     envOverrides:
