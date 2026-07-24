@@ -25,6 +25,29 @@ components:
       - name: PRODUCT_CATALOG_ADDR
         value: dns:///product-catalog-headless:8080
 
+  # Mandate 15 controlled availability drill. Keep desired replicas at one so
+  # AIOps observes desired=1/ready=0 as DOWN; scaling to zero is intentionally
+  # classified as IDLE and would not exercise the on-call path.
+  #
+  # Safety boundary:
+  # - CDO/on-call must approve the drill window before this change is merged.
+  # - AIOps remediation remains dry-run/autonomous=false below.
+  # - Revert this entire llm block immediately after firing evidence is
+  #   captured; the restore rollout returns llm to its original probe-free
+  #   RollingUpdate configuration.
+  llm:
+    strategy:
+      type: Recreate
+    readinessProbe:
+      httpGet:
+        path: /__tf4aio_controlled_drill_not_ready
+        port: 8000
+      initialDelaySeconds: 1
+      periodSeconds: 2
+      timeoutSeconds: 1
+      failureThreshold: 1
+      successThreshold: 1
+
   aiops:
     enabled: true
     envOverrides:
