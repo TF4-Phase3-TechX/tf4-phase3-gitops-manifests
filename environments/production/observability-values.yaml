@@ -1,4 +1,7 @@
 # Observability dùng chung: bật 5 subchart, tắt TẤT CẢ app component.
+gp3StorageClasses:
+  enabled: true
+
 opentelemetry-collector: { enabled: true }
 jaeger: { enabled: true }
 
