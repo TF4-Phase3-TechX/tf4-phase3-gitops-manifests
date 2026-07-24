@@ -48,8 +48,8 @@ components:
       tag: "8340af1-kafka"
   llm:
     imageOverride:
-      tag: "a08f059-llm"
-      digest: "sha256:e62a757a42ba7bb144cb109549e4b936301faeead6292c6fa4952190546f1142"
+      tag: "702ca64-llm"
+      digest: "sha256:7f326e9d93af040ae730b80dd0b568d59d0017d70070db927103441a22354ae4"
   load-generator:
     imageOverride:
       tag: "9c8f128-load-generator"
