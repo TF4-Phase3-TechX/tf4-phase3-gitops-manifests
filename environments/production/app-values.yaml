@@ -57,6 +57,13 @@ components:
     envOverrides:
       - name: LOCUST_AUTOSTART
         value: "true"
+      # Controlled AIOps Mandate-15 busy/no-false-page drill.
+      # Restore to chart defaults (10 users / spawn rate 1) immediately after
+      # two fully covered detector polls or any abort condition.
+      - name: LOCUST_USERS
+        value: "150"
+      - name: LOCUST_SPAWN_RATE
+        value: "10"
 
   frontend-proxy:
     envOverrides:
