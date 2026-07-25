@@ -241,15 +241,6 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
-    # TEMPORARY MANDATE-22 DRILL WINDOW. Argo applies the constrained template
-    # because revisionHistoryLimit also changes, then ignores only resources so
-    # the controller's rollback is not self-healed back to the bad template.
-    - group: apps
-      kind: Deployment
-      name: product-reviews
-      namespace: techx-tf4
-      jsonPointers:
-        - /spec/template/spec/containers/0/resources
 
 ---
 apiVersion: argoproj.io/v1alpha1
