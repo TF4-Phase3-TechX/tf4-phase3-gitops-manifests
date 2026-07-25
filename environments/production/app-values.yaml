@@ -9,10 +9,10 @@ grafana: { enabled: false }
 opensearch: { enabled: false }
 metrics-server: { enabled: false }
 
-# TEMPORARY MANDATE-22 CALIBRATED SUCCESS-PATH DRILL, warm-up stage.
-# Restore all independent gates and bounded load immediately after observation.
+# Run the detector continuously while every production mutation path remains
+# disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
 aiopsRemediation:
-  liveEnabled: true
+  liveEnabled: false
 
 default:
   envOverrides:
@@ -29,11 +29,9 @@ components:
     enabled: true
     envOverrides:
       - name: REMEDIATION_MODE
-        value: live
+        value: dry-run
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "true"
-      - name: AIOPS_ALLOWED_DEPLOYMENTS
-        value: product-reviews
+        value: "false"
       - name: OPENSEARCH_URL
         value: http://opensearch.techx-observability.svc.cluster.local:9200
 
@@ -59,12 +57,6 @@ components:
     envOverrides:
       - name: LOCUST_AUTOSTART
         value: "true"
-      # TEMPORARY calibrated high-load observation. Restore to the baseline
-      # immediately after policy, execution, and post-check evidence is captured.
-      - name: LOCUST_USERS
-        value: "150"
-      - name: LOCUST_SPAWN_RATE
-        value: "10"
 
   frontend-proxy:
     envOverrides:
@@ -91,17 +83,6 @@ components:
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
-    # A non-ignored revisionHistoryLimit change applies the constrained pod
-    # template once; Argo ignores only resources during the drill so the
-    # remediation controller can retain its rollback.
-    revisionHistoryLimit: 11
-    resources:
-      requests:
-        cpu: 25m
-        memory: 96Mi
-      limits:
-        cpu: 50m
-        memory: 192Mi
     readinessProbe:
       grpc:
         port: 3552
