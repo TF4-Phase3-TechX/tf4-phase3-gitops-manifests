@@ -62,9 +62,9 @@ components:
       # Stage 1 intentionally warms the constrained revision before the
       # reviewed 150/10 ramp, preserving the detector's trend evidence.
       - name: LOCUST_USERS
-        value: "150"
+        value: "30"
       - name: LOCUST_SPAWN_RATE
-        value: "10"
+        value: "3"
 
   frontend-proxy:
     envOverrides:
