@@ -61,9 +61,9 @@ components:
         value: "true"
       # Bounded traffic keeps the post-action 2m metrics window populated.
       - name: LOCUST_USERS
-        value: "30"
+        value: "150"
       - name: LOCUST_SPAWN_RATE
-        value: "3"
+        value: "10"
 
   frontend-proxy:
     envOverrides:
