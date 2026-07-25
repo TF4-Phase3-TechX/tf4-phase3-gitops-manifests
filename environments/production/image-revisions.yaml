@@ -1,8 +1,8 @@
 components:
   aiops:
     imageOverride:
-      tag: "bb30780-aiops"
-      digest: "sha256:8bf2f1fe7a157705d6d48de5edeb282d47405cae870af8a5e7c94c815548a780"
+      tag: "c2560b9-aiops"
+      digest: "sha256:c9e386038d1e75e28a8ef1627fdb35435db1d0a1343c0402dc2bc6749556f01d"
   accounting:
     imageOverride:
       tag: "b1ddab3-accounting"
@@ -76,5 +76,5 @@ components:
       digest: "sha256:c520a5e1e6b2559f76e9ab9b26393203af9f46e4068cc20993026fb946dae53e"
   shipping:
     imageOverride:
-      tag: "a08f059-shipping"
-      digest: "sha256:a5dd329eeabc95d26a5c561930ba250ea9d7957f498d45c3f6880237a4b1110e"
+      tag: "c98b2f3-shipping"
+      digest: "sha256:27760ea3f6bb7300b449bd1ba724c5a5c837964b0807eec8b1dda7c5be0a8ee2"
