@@ -152,6 +152,36 @@ components:
     envOverrides:
       - name: PRODUCT_CATALOG_ADDR
         value: dns:///product-catalog-headless:8080
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: frontend
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend
 
   aiops:
     enabled: true
@@ -171,6 +201,68 @@ components:
   # pinned to the dead revision until promoted by hand).
   checkout:
     useRollout: false
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: checkout
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: checkout
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: checkout
+
+  payment:
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: payment
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: payment
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: payment
 
   # CDO08-REL-16 Blue-Green cutover window is over; useRollout reverted to the
   # chart default (false, plain Deployment/RollingUpdate) — same rationale as
@@ -224,6 +316,36 @@ components:
         value: grafana.techx-observability.svc.cluster.local
       - name: JAEGER_HOST
         value: jaeger.techx-observability.svc.cluster.local
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: frontend-proxy
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend-proxy
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend-proxy
 
   postgresql:
     enabled: false
