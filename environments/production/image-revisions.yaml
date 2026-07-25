@@ -13,12 +13,12 @@ components:
       digest: "sha256:dc18b1f321fa83583a2eb9f35032704ec67f8228588e18e05313ad5b279eb8ca"
   cart:
     imageOverride:
-      tag: "b1ddab3-cart"
-      digest: "sha256:707c8b13f74aa4c0c17526b7c2bb33ea45cc9fab5416f90590b90176e820b1e4"
+      tag: "1b571ee-cart"
+      digest: "sha256:7e816bc54aeb60354a0680a473d72080d01c6fe9f16b96f5a3573d1007f4ea51"
   checkout:
     imageOverride:
-      tag: "14da184-checkout"
-      digest: "sha256:5c5b977806c8d6b40455d2f0aa7ca00f4ca53a64a4b7f69cf79e2da6645a8bdd"
+      tag: "1b571ee-checkout"
+      digest: "sha256:acc2a5680358c07710c9b7254adf32ba55a072cf1165b29fbde0aa0f8f1b9df0"
   currency:
     imageOverride:
       tag: "c2d7af2-currency"
@@ -33,12 +33,12 @@ components:
       digest: "sha256:51390f2a755033e805f2d58767330b8c1721a33228896b93879ff150efc5c70d"
   frontend:
     imageOverride:
-      tag: "b536a75-frontend"
-      digest: "sha256:d4e50f027b9ad0fe369034aa543a8ab5442ddbdadde0fda77642df2bcfa1fd2e"
+      tag: "1b571ee-frontend"
+      digest: "sha256:ed92fbc360b0990f8fd526c03d9bdfc71f40fa54c7809d2966e8f91de0e44f4e"
   frontend-proxy:
     imageOverride:
-      tag: "f170d04-frontend-proxy"
-      digest: "sha256:30d84d37615c9bece44074b4c8ab0de870d7e5e8dc4a0ff1a52542d9a8e7adfc"
+      tag: "1b571ee-frontend-proxy"
+      digest: "sha256:0dd77c3ee6c70bbbc7eaf068984ad645a087d9d66f29af83d24c4d75259a67c1"
   image-provider:
     imageOverride:
       tag: "694654e-image-provider"
@@ -60,8 +60,8 @@ components:
       digest: "sha256:0a3296cfe8f95d93057ad0113d6275bccd02e9bdec985da1f7ad751a85defca1"
   product-catalog:
     imageOverride:
-      tag: "9fcb588-product-catalog"
-      digest: "sha256:d4214bd2e361aeefe74cb6db3a10dd10f04391cff06c03f527db776fb44cfd5e"
+      tag: "1b571ee-product-catalog"
+      digest: "sha256:20a10764f0d4dfa7821b8e36aaf86b04cd400f5590eedfdd6502980dfe4901a3"
   product-reviews:
     imageOverride:
       tag: "9954486-product-reviews"
@@ -76,5 +76,5 @@ components:
       digest: "sha256:4e985d9ff0462a61ce2577b4d2c52c8d80be2e97719a812f35040366240bd110"
   shipping:
     imageOverride:
-      tag: "c98b2f3-shipping"
-      digest: "sha256:27760ea3f6bb7300b449bd1ba724c5a5c837964b0807eec8b1dda7c5be0a8ee2"
+      tag: "1b571ee-shipping"
+      digest: "sha256:913671232530f3fac432b3f1f57a8e52fea08859a3bd217d84959301b9f2fb17"
