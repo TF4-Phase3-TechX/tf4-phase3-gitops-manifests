@@ -24,8 +24,8 @@ components:
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
-        karpenter.sh/capacity-type: on-demand
-        optimization.techx.io/tier: arm64-canary
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -36,7 +36,7 @@ components:
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
-          value: arm64-canary
+          value: arm64-spot
           effect: NoSchedule
       topologySpreadConstraints:
         - maxSkew: 1
@@ -51,6 +51,102 @@ components:
           labelSelector:
             matchLabels:
               app.kubernetes.io/component: currency
+
+  quote:
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: quote
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: quote
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: quote
+
+  shipping:
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: shipping
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: shipping
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: shipping
+
+  product-catalog:
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: product-catalog
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-catalog
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: product-catalog
 
   frontend:
     envOverrides:
@@ -84,6 +180,36 @@ components:
   # envOverrides.
   cart:
     useRollout: false
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: spot
+        optimization.techx.io/tier: arm64-spot
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: cart
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-spot
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: cart
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: cart
 
   load-generator:
     envOverrides:
