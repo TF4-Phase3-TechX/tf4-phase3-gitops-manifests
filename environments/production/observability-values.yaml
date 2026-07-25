@@ -2,7 +2,17 @@
 gp3StorageClasses:
   enabled: true
 
-opentelemetry-collector: { enabled: true }
+opentelemetry-collector:
+  enabled: true
+  tolerations:
+    - key: optimization.techx.io/tier
+      operator: Equal
+      value: arm64-canary
+      effect: NoSchedule
+    - key: optimization.techx.io/tier
+      operator: Equal
+      value: arm64-spot
+      effect: NoSchedule
 jaeger: { enabled: true }
 
 prometheus:
