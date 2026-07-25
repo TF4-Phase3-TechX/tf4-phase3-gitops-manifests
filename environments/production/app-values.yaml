@@ -9,10 +9,10 @@ grafana: { enabled: false }
 opensearch: { enabled: false }
 metrics-server: { enabled: false }
 
-# Run the detector continuously while every production mutation path remains
-# disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
+# TEMPORARY MANDATE-22 CONTROLLED RERUN after the deployments/status RBAC fix.
+# Restore all independent gates and bounded load immediately after observation.
 aiopsRemediation:
-  liveEnabled: false
+  liveEnabled: true
 
 default:
   envOverrides:
@@ -29,9 +29,11 @@ components:
     enabled: true
     envOverrides:
       - name: REMEDIATION_MODE
-        value: dry-run
+        value: live
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "false"
+        value: "true"
+      - name: AIOPS_ALLOWED_DEPLOYMENTS
+        value: product-reviews
       - name: OPENSEARCH_URL
         value: http://opensearch.techx-observability.svc.cluster.local:9200
 
@@ -57,6 +59,10 @@ components:
     envOverrides:
       - name: LOCUST_AUTOSTART
         value: "true"
+      - name: LOCUST_USERS
+        value: "150"
+      - name: LOCUST_SPAWN_RATE
+        value: "10"
 
   frontend-proxy:
     envOverrides:
@@ -83,6 +89,17 @@ components:
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
+    # The non-ignored revisionHistoryLimit change makes ApplyOutOfSyncOnly
+    # apply this constrained pod template once. Argo ignores only resources
+    # during the drill so the controller can retain its rollback.
+    revisionHistoryLimit: 11
+    resources:
+      requests:
+        cpu: 25m
+        memory: 96Mi
+      limits:
+        cpu: 50m
+        memory: 192Mi
     readinessProbe:
       grpc:
         port: 3552
