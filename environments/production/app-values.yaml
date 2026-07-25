@@ -9,10 +9,10 @@ grafana: { enabled: false }
 opensearch: { enabled: false }
 metrics-server: { enabled: false }
 
-# Run the detector continuously while every production mutation path remains
-# disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
+# TEMPORARY MANDATE-22 FINAL SUCCESS-PATH DRILL. Restore every independent
+# mutation gate and the bounded load immediately after evidence capture.
 aiopsRemediation:
-  liveEnabled: false
+  liveEnabled: true
 
 default:
   envOverrides:
@@ -29,9 +29,11 @@ components:
     enabled: true
     envOverrides:
       - name: REMEDIATION_MODE
-        value: dry-run
+        value: live
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "false"
+        value: "true"
+      - name: AIOPS_ALLOWED_DEPLOYMENTS
+        value: product-reviews
       - name: OPENSEARCH_URL
         value: http://opensearch.techx-observability.svc.cluster.local:9200
 
@@ -57,6 +59,11 @@ components:
     envOverrides:
       - name: LOCUST_AUTOSTART
         value: "true"
+      # Bounded traffic keeps the post-action 2m metrics window populated.
+      - name: LOCUST_USERS
+        value: "30"
+      - name: LOCUST_SPAWN_RATE
+        value: "3"
 
   frontend-proxy:
     envOverrides:
@@ -83,6 +90,17 @@ components:
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
+    # This non-resource change forces the constrained template to apply once.
+    # Argo ignores only resources during the drill so remediation may retain
+    # the restored known-good resource profile.
+    revisionHistoryLimit: 11
+    resources:
+      requests:
+        cpu: 25m
+        memory: 96Mi
+      limits:
+        cpu: 50m
+        memory: 192Mi
     readinessProbe:
       grpc:
         port: 3552
