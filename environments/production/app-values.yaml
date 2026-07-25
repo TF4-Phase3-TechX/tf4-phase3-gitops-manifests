@@ -20,6 +20,38 @@ default:
       value: otel-collector.techx-observability.svc.cluster.local
 
 components:
+  currency:
+    schedulingRules:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+        karpenter.sh/capacity-type: on-demand
+        optimization.techx.io/tier: arm64-canary
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: currency
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: optimization.techx.io/tier
+          operator: Equal
+          value: arm64-canary
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: currency
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: currency
+
   frontend:
     envOverrides:
       - name: PRODUCT_CATALOG_ADDR
