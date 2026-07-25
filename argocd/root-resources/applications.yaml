@@ -241,6 +241,15 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+    # TEMPORARY MANDATE-22 DRILL WINDOW. Argo applies the constrained resources
+    # from Git once, then ignores only this field so the AIOps rollback is not
+    # immediately self-healed back to the known-bad template.
+    - group: apps
+      kind: Deployment
+      name: product-reviews
+      namespace: techx-tf4
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources
 
 ---
 apiVersion: argoproj.io/v1alpha1
