@@ -62,9 +62,9 @@ components:
       # TEMPORARY MANDATE-22 load: enough concurrency to expose queuing on the
       # 50m product-reviews revision without repeating the prior 150-user drill.
       - name: LOCUST_USERS
-        value: "30"
+        value: "150"
       - name: LOCUST_SPAWN_RATE
-        value: "3"
+        value: "10"
 
   frontend-proxy:
     envOverrides:
