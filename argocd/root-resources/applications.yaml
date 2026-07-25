@@ -241,6 +241,15 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+    # TEMPORARY MANDATE-22 SUCCESS-PATH DRILL. The Deployment-level trigger
+    # still reconciles the constrained template; only resources are ignored so
+    # autonomous rollback is not self-healed back to the fault.
+    - group: apps
+      kind: Deployment
+      name: product-reviews
+      namespace: techx-tf4
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources
 
 ---
 apiVersion: argoproj.io/v1alpha1
