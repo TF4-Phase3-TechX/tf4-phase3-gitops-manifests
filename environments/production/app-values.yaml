@@ -59,12 +59,6 @@ components:
     envOverrides:
       - name: LOCUST_AUTOSTART
         value: "true"
-      # TEMPORARY MANDATE-22 load: enough concurrency to expose queuing on the
-      # 50m product-reviews revision without repeating the prior 150-user drill.
-      - name: LOCUST_USERS
-        value: "30"
-      - name: LOCUST_SPAWN_RATE
-        value: "3"
 
   frontend-proxy:
     envOverrides:
