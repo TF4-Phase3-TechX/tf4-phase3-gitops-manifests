@@ -56,8 +56,8 @@ components:
       digest: "sha256:a3cae60faaeb501359964968a703ef7bff11874e61e0b29b44957fa42e0d092d"
   payment:
     imageOverride:
-      tag: "a08f059-payment"
-      digest: "sha256:d566391fa1545bece48734badf83c7e3fd0199f8a44c3bd2c9ce91619dd92aa2"
+      tag: "5f62ab9-payment"
+      digest: "sha256:197bbba835af0beed1adf925936ccc204f28fed161f0cb1c6e8fc8728caeb405"
   product-catalog:
     imageOverride:
       tag: "9fcb588-product-catalog"
@@ -68,8 +68,8 @@ components:
       digest: "sha256:28a0f286e07c4af7a5e96437e2a9d8ae5acca11f62615fcb0f4c77c3559d0dd1"
   quote:
     imageOverride:
-      tag: "a08f059-quote"
-      digest: "sha256:daea9b3c48d363f7849693708c679d49ac739add2817d73ea7afc4c1cb6bbb2f"
+      tag: "5f62ab9-quote"
+      digest: "sha256:97e733f400aaf2d7844a28c9f6a1138f52908d5cb3dd999407ed55dda2566ce1"
   recommendation:
     imageOverride:
       tag: "bc29c93-recommendation"
