@@ -21,8 +21,8 @@ components:
       digest: "sha256:5c5b977806c8d6b40455d2f0aa7ca00f4ca53a64a4b7f69cf79e2da6645a8bdd"
   currency:
     imageOverride:
-      tag: "fe3bd7e-currency"
-      digest: "sha256:813f9e81ca2887bcd34c89e8fc40f08b879ea02d87c546dac8b71db0d6b88057"
+      tag: "c2d7af2-currency"
+      digest: "sha256:4ee801ca9bb868d49d41bf6d948da4f61f2479c3db4d045504c94b6dda955783"
   email:
     imageOverride:
       tag: "694654e-email"
