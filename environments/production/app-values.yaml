@@ -9,12 +9,10 @@ grafana: { enabled: false }
 opensearch: { enabled: false }
 metrics-server: { enabled: false }
 
-# TEMPORARY MANDATE-22 CONTROLLED DRILL.
-# Restore all three independent gates to false/dry-run/empty immediately after
-# the signed drill window. The Deployment allowlist intentionally contains one
-# target only.
+# Run the detector continuously while every production mutation path remains
+# disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
 aiopsRemediation:
-  liveEnabled: true
+  liveEnabled: false
 
 default:
   envOverrides:
@@ -31,11 +29,9 @@ components:
     enabled: true
     envOverrides:
       - name: REMEDIATION_MODE
-        value: live
+        value: dry-run
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "true"
-      - name: AIOPS_ALLOWED_DEPLOYMENTS
-        value: product-reviews
+        value: "false"
       - name: OPENSEARCH_URL
         value: http://opensearch.techx-observability.svc.cluster.local:9200
 
@@ -87,16 +83,6 @@ components:
 
   product-reviews:
     serviceAccountName: product-reviews-bedrock
-    # TEMPORARY MANDATE-22 FAULT REVISION. The previous ReplicaSet retains the
-    # normal 75m request / 300m limit and is the only approved rollback target.
-    # One replica plus bounded load keeps the blast radius to this service.
-    resources:
-      requests:
-        cpu: 25m
-        memory: 96Mi
-      limits:
-        cpu: 50m
-        memory: 192Mi
     readinessProbe:
       grpc:
         port: 3552
