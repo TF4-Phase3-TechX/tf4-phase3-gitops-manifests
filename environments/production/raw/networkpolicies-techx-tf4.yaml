@@ -662,7 +662,7 @@ metadata:
   annotations:
     cdo08.techx.io/external-egress-owner: "CDO08-SEC-21"
     cdo08.techx.io/external-egress-expiry: "2026-08-21"
-    cdo08.techx.io/external-egress-reason: "Checkout/accounting/fraud-detection use approved private MSK endpoint; allow only TCP/9096 to private subnets, not broad internet egress."
+    cdo08.techx.io/external-egress-reason: "Checkout/accounting/fraud-detection and REL-22 Kafka Connect archive use approved private MSK endpoint; allow only TCP/9096 to private subnets, not broad internet egress."
 spec:
   podSelector:
     matchExpressions:
@@ -672,6 +672,7 @@ spec:
           - checkout
           - accounting
           - fraud-detection
+          - kafka-connect
   policyTypes:
     - Egress
   egress:
