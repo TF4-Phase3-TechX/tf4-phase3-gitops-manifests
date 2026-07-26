@@ -19,6 +19,7 @@ _ESO_SAFE_LINE = re.compile(
     r"|(remoteRef\s*:\s*$)"                     # remoteRef block opener
     r"|key\s*:\s*\S"                            # remoteRef.key  (AWS SM path)
     r"|property\s*:\s*\S"                       # remoteRef.property
+    r"|automountServiceAccountToken\s*:"        # Kubernetes pod hardening field
     r"|(target\s*:\s*$)"                        # target block opener
     r"|name\s*:\s*\S"                           # target.name / metadata.name
     r"|creationPolicy\s*:"                      # target.creationPolicy
@@ -27,7 +28,7 @@ _ESO_SAFE_LINE = re.compile(
 
 
 def documents(path):
-    return [doc for doc in yaml.safe_load_all(path.read_text()) if doc]
+    return [doc for doc in yaml.safe_load_all(path.read_text(encoding="utf-8")) if doc]
 
 
 def has_plaintext_credential(text: str) -> bool:
@@ -69,7 +70,7 @@ def main():
                 if identity in seen:
                     raise SystemExit(f"duplicate manifest identity: {identity}")
                 seen.add(identity)
-        if has_plaintext_credential(path.read_text()):
+        if has_plaintext_credential(path.read_text(encoding="utf-8")):
             raise SystemExit(f"possible plaintext credential in {path.relative_to(ROOT)}")
 
     base = subprocess.run(["git", "merge-base", "origin/main", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True).stdout.strip()

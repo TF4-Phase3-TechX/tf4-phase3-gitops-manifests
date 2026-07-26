@@ -1,0 +1,257 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-connect-orders-s3-connector
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/name: kafka-connect-orders-s3-connector
+    app.kubernetes.io/component: kafka-connect
+    app.kubernetes.io/part-of: techx-corp
+    cdo08.techx.io/task: CDO08-REL-22
+data:
+  config.json: |
+    {
+      "name": "orders-s3-archive",
+      "connector.class": "io.confluent.connect.s3.S3SinkConnector",
+      "tasks.max": "1",
+      "topics": "orders",
+      "s3.region": "us-east-1",
+      "s3.bucket.name": "tf4-msk-orders-archive-511825856493-us-east-1",
+      "topics.dir": "orders",
+      "storage.class": "io.confluent.connect.s3.storage.S3Storage",
+      "format.class": "io.confluent.connect.s3.format.json.JsonFormat",
+      "schema.compatibility": "NONE",
+      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "false",
+      "partitioner.class": "io.confluent.connect.storage.partitioner.TimeBasedPartitioner",
+      "path.format": "'topic'=orders/'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH",
+      "partition.duration.ms": "3600000",
+      "locale": "en",
+      "timezone": "UTC",
+      "timestamp.extractor": "Record",
+      "rotate.schedule.interval.ms": "600000",
+      "flush.size": "100",
+      "s3.part.size": "5242880",
+      "errors.tolerance": "all",
+      "errors.deadletterqueue.topic.name": "orders-archive-dlq",
+      "errors.deadletterqueue.topic.replication.factor": "2",
+      "errors.deadletterqueue.context.headers.enable": "true",
+      "errors.log.enable": "true",
+      "errors.log.include.messages": "false",
+      "config.action.reload": "none"
+    }
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rel22-allow-kafka-connect-bootstrap-rest
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/name: kafka-connect-orders-s3-connector
+    app.kubernetes.io/component: kafka-connect
+    app.kubernetes.io/part-of: techx-corp
+    cdo08.techx.io/task: CDO08-REL-22
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kafka-connect-orders-archive
+      app.kubernetes.io/component: kafka-connect
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: kafka-connect-orders-s3-connector
+              app.kubernetes.io/component: kafka-connect
+      ports:
+        - protocol: TCP
+          port: 8083
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rel22-allow-kafka-connect-aws-api-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/name: kafka-connect-orders-s3-connector
+    app.kubernetes.io/component: kafka-connect
+    app.kubernetes.io/part-of: techx-corp
+    cdo08.techx.io/task: CDO08-REL-22
+  annotations:
+    cdo08.techx.io/external-egress-reason: "Kafka Connect orders archive uses IRSA STS endpoint and S3 Gateway endpoint to write archived records."
+    cdo08.techx.io/ip-ranges-source: "https://ip-ranges.amazonaws.com/ip-ranges.json createDate=2026-07-26-01-57-05 service=S3 region=us-east-1"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kafka-connect-orders-archive
+      app.kubernetes.io/component: kafka-connect
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 10.0.10.69/32
+        - ipBlock:
+            cidr: 10.0.11.35/32
+      ports:
+        - protocol: TCP
+          port: 443
+    - to:
+        - ipBlock:
+            cidr: 16.15.156.0/22
+        - ipBlock:
+            cidr: 16.15.172.0/22
+        - ipBlock:
+            cidr: 18.34.0.0/19
+        - ipBlock:
+            cidr: 16.15.192.0/18
+        - ipBlock:
+            cidr: 54.231.0.0/16
+        - ipBlock:
+            cidr: 52.216.0.0/15
+        - ipBlock:
+            cidr: 16.15.164.0/22
+        - ipBlock:
+            cidr: 18.34.232.0/21
+        - ipBlock:
+            cidr: 16.15.168.0/22
+        - ipBlock:
+            cidr: 16.15.176.0/20
+        - ipBlock:
+            cidr: 16.182.0.0/16
+        - ipBlock:
+            cidr: 16.15.160.0/22
+        - ipBlock:
+            cidr: 3.5.0.0/19
+        - ipBlock:
+            cidr: 1.178.4.0/24
+        - ipBlock:
+            cidr: 1.178.5.0/24
+        - ipBlock:
+            cidr: 1.178.6.0/24
+        - ipBlock:
+            cidr: 3.2.64.0/24
+        - ipBlock:
+            cidr: 3.2.65.0/24
+        - ipBlock:
+            cidr: 3.2.74.0/24
+        - ipBlock:
+            cidr: 44.192.134.240/28
+        - ipBlock:
+            cidr: 44.192.140.64/28
+      ports:
+        - protocol: TCP
+          port: 443
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rel22-allow-kafka-connect-bootstrap-egress
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/name: kafka-connect-orders-s3-connector
+    app.kubernetes.io/component: kafka-connect
+    app.kubernetes.io/part-of: techx-corp
+    cdo08.techx.io/task: CDO08-REL-22
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kafka-connect-orders-s3-connector
+      app.kubernetes.io/component: kafka-connect
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: kafka-connect-orders-archive
+              app.kubernetes.io/component: kafka-connect
+      ports:
+        - protocol: TCP
+          port: 8083
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-connect-orders-s3-connector
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/name: kafka-connect-orders-s3-connector
+    app.kubernetes.io/component: kafka-connect
+    app.kubernetes.io/part-of: techx-corp
+    cdo08.techx.io/task: CDO08-REL-22
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kafka-connect-orders-s3-connector
+        app.kubernetes.io/component: kafka-connect
+        app.kubernetes.io/part-of: techx-corp
+        cdo08.techx.io/task: CDO08-REL-22
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: apply-connector
+          image: 511825856493.dkr.ecr.us-east-1.amazonaws.com/techx-corp:3cfe2db-kafka-connect@sha256:7defde78e21418b51049a943bf28a6f7aaa1dd4f466b422da9ebb059124736ae
+          imagePullPolicy: IfNotPresent
+          command:
+            - bash
+            - -ec
+            - |
+              for i in $(seq 1 60); do
+                if curl -sf http://kafka-connect-orders-archive:8083/connectors >/dev/null; then
+                  break
+                fi
+                sleep 5
+              done
+              curl -sf -X PUT \
+                -H "Content-Type: application/json" \
+                --data @/connector/config.json \
+                http://kafka-connect-orders-archive:8083/connectors/orders-s3-archive/config
+              echo
+              curl -sf http://kafka-connect-orders-archive:8083/connectors/orders-s3-archive/status
+              echo
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: connector-config
+              mountPath: /connector
+              readOnly: true
+      volumes:
+        - name: connector-config
+          configMap:
+            name: kafka-connect-orders-s3-connector
