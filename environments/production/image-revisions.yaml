@@ -78,3 +78,11 @@ components:
     imageOverride:
       tag: "1b571ee-shipping"
       digest: "sha256:913671232530f3fac432b3f1f57a8e52fea08859a3bd217d84959301b9f2fb17"
+kafkaConnectArchive:
+  enabled: true
+  image:
+    tag: "3cfe2db-kafka-connect"
+    digest: "sha256:7defde78e21418b51049a943bf28a6f7aaa1dd4f466b422da9ebb059124736ae"
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::511825856493:role/techx-tf4-orders-kafka-connect-archive"
