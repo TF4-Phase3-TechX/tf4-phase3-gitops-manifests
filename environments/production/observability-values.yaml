@@ -37,7 +37,7 @@ metrics-server:
   enabled: true
   fullnameOverride: metrics-server
   resources:
-    requests: { cpu: 50m, memory: 100Mi }
+    requests: { cpu: 15m, memory: 100Mi }
     limits: { cpu: 100m, memory: 200Mi }
 
 components:

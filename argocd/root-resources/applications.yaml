@@ -263,7 +263,7 @@ spec:
         controller:
           replicas: 1
           resources:
-            requests: { cpu: 50m, memory: 64Mi }
+            requests: { cpu: 10m, memory: 64Mi }
             limits: { cpu: 250m, memory: 256Mi }
         dashboard:
           enabled: false
@@ -297,7 +297,7 @@ spec:
         # (Karpenter NodePool cap is 16 vCPU). Chart default requests 200m/384Mi, limits 1000m/384Mi.
         replicas: 1
         resources:
-          requests: { cpu: 50m, memory: 128Mi }
+          requests: { cpu: 25m, memory: 128Mi }
           limits: { cpu: 500m, memory: 512Mi }
         watchAnyNamespace: false
         watchNamespaces: ["kafka-operator", "techx-tf4"]
