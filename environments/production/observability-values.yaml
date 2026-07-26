@@ -13,6 +13,10 @@ opentelemetry-collector:
       operator: Equal
       value: arm64-spot
       effect: NoSchedule
+    - key: optimization.techx.io/tier
+      operator: Equal
+      value: arm64-protected
+      effect: NoSchedule
 jaeger: { enabled: true }
 
 prometheus:
