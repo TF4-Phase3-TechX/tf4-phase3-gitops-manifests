@@ -25,7 +25,7 @@ data:
       "value.converter": "org.apache.kafka.connect.json.JsonConverter",
       "value.converter.schemas.enable": "false",
       "partitioner.class": "io.confluent.connect.storage.partitioner.TimeBasedPartitioner",
-      "path.format": "'topic'=orders/'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH",
+      "path.format": "'topic=orders'/'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH",
       "partition.duration.ms": "3600000",
       "locale": "en",
       "timezone": "UTC",
