@@ -5,12 +5,12 @@ components:
       digest: "sha256:97c45472e4897393115269ad829cf809a4379ae84ace18538b83963104be5eb7"
   accounting:
     imageOverride:
-      tag: "b1ddab3-accounting"
-      digest: "sha256:c9a369992accd76f498e421a45a6f038b7425158217a73b3a493950097beb9db"
+      tag: "f215443-accounting"
+      digest: "sha256:7a9ae928932bf6489c353eee0890f973a983a22510ce940436366003707285ba"
   ad:
     imageOverride:
-      tag: "036ab41-ad"
-      digest: "sha256:dc18b1f321fa83583a2eb9f35032704ec67f8228588e18e05313ad5b279eb8ca"
+      tag: "f215443-ad"
+      digest: "sha256:55dfa143d92746752e452c06b74273ae3bd15062bac26afe58dec16fb487d1d8"
   cart:
     imageOverride:
       tag: "1b571ee-cart"
@@ -29,8 +29,8 @@ components:
       digest: "sha256:21705c8071ece4f875e6e9a7506bd4a470dac81577b0d40a73982bfd9e7e3ea7"
   fraud-detection:
     imageOverride:
-      tag: "036ab41-fraud-detection"
-      digest: "sha256:51390f2a755033e805f2d58767330b8c1721a33228896b93879ff150efc5c70d"
+      tag: "f215443-fraud-detection"
+      digest: "sha256:707ba8f4d27be11967dd835be5484ea33a84f2544f4c8a64e046981b5a254508"
   frontend:
     imageOverride:
       tag: "1b571ee-frontend"
@@ -41,19 +41,19 @@ components:
       digest: "sha256:0dd77c3ee6c70bbbc7eaf068984ad645a087d9d66f29af83d24c4d75259a67c1"
   image-provider:
     imageOverride:
-      tag: "694654e-image-provider"
-      digest: "sha256:82b17baefb20ebd27f046e0351eebd625daa0015e92b8f4fac87c68eb792ef4b"
+      tag: "f215443-image-provider"
+      digest: "sha256:069085392ca233890ce8e33e09429df967daff61d885c30800df301ace5c66ce"
   kafka:
     imageOverride:
       tag: "8340af1-kafka"
   llm:
     imageOverride:
-      tag: "702ca64-llm"
-      digest: "sha256:7f326e9d93af040ae730b80dd0b568d59d0017d70070db927103441a22354ae4"
+      tag: "f215443-llm"
+      digest: "sha256:bee51a6643b3c76ad76eb96deb029fd39632fb45a53138c77e20973d1794cdc4"
   load-generator:
     imageOverride:
-      tag: "9c8f128-load-generator"
-      digest: "sha256:a3cae60faaeb501359964968a703ef7bff11874e61e0b29b44957fa42e0d092d"
+      tag: "f215443-load-generator"
+      digest: "sha256:abb9bb8117df568b03f0c40ee5c3cd8c38fc2b7bb04deb4da23602c703e23b30"
   payment:
     imageOverride:
       tag: "b6e223a-payment"
@@ -64,8 +64,8 @@ components:
       digest: "sha256:20a10764f0d4dfa7821b8e36aaf86b04cd400f5590eedfdd6502980dfe4901a3"
   product-reviews:
     imageOverride:
-      tag: "9954486-product-reviews"
-      digest: "sha256:28a0f286e07c4af7a5e96437e2a9d8ae5acca11f62615fcb0f4c77c3559d0dd1"
+      tag: "f215443-product-reviews"
+      digest: "sha256:f9a19e5c865bcd7fc50a7ecc51a4f27b250699f3fc602c4cfe23fdc23ac6c6a0"
   quote:
     imageOverride:
       tag: "5f62ab9-quote"
