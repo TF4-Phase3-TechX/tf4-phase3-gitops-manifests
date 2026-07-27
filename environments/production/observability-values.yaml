@@ -13,6 +13,10 @@ opentelemetry-collector:
       operator: Equal
       value: arm64-spot
       effect: NoSchedule
+    - key: optimization.techx.io/tier
+      operator: Equal
+      value: arm64-protected
+      effect: NoSchedule
 jaeger: { enabled: true }
 
 prometheus:
@@ -25,11 +29,40 @@ prometheus:
       limits:
         cpu: 1000m
         memory: 1Gi
+  alertmanager:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+      karpenter.sh/capacity-type: on-demand
+      optimization.techx.io/tier: arm64-protected
+    tolerations:
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-protected
+        effect: NoSchedule
 
-grafana: { enabled: true }
+grafana:
+  enabled: true
+  nodeSelector:
+    kubernetes.io/arch: arm64
+    karpenter.sh/capacity-type: on-demand
+    optimization.techx.io/tier: arm64-protected
+  tolerations:
+    - key: optimization.techx.io/tier
+      operator: Equal
+      value: arm64-protected
+      effect: NoSchedule
 
 opensearch:
   enabled: true
+  nodeSelector:
+    kubernetes.io/arch: arm64
+    karpenter.sh/capacity-type: on-demand
+    optimization.techx.io/tier: arm64-protected
+  tolerations:
+    - key: optimization.techx.io/tier
+      operator: Equal
+      value: arm64-protected
+      effect: NoSchedule
   otelLogsLifecycle:
     enabled: true
 

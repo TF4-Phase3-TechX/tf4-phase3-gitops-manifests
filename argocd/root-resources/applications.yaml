@@ -77,6 +77,9 @@ spec:
     helm:
       values: |
         installCRDs: true
+        nodeSelector:
+          role: worker
+          kubernetes.io/arch: amd64
         serviceAccount:
           annotations:
             eks.amazonaws.com/role-arn: arn:aws:iam::511825856493:role/external-secrets-techx-tf4-cluster
@@ -84,10 +87,16 @@ spec:
           requests: { cpu: 5m, memory: 32Mi }
           limits: { cpu: 50m, memory: 64Mi }
         webhook:
+          nodeSelector:
+            role: worker
+            kubernetes.io/arch: amd64
           resources:
             requests: { cpu: 5m, memory: 32Mi }
             limits: { cpu: 50m, memory: 48Mi }
         certController:
+          nodeSelector:
+            role: worker
+            kubernetes.io/arch: amd64
           resources:
             requests: { cpu: 5m, memory: 48Mi }
             limits: { cpu: 50m, memory: 80Mi }
@@ -144,6 +153,31 @@ spec:
       selfHeal: true
     syncOptions:
       - SkipDryRunOnMissingResource=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-redis-placement
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: techx-production
+  source:
+    repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-gitops-manifests.git'
+    targetRevision: main
+    path: platform/argocd
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - Validate=false
 
 ---
 apiVersion: argoproj.io/v1alpha1
