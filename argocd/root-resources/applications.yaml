@@ -79,7 +79,6 @@ spec:
         installCRDs: true
         nodeSelector:
           role: worker
-          kubernetes.io/arch: amd64
         serviceAccount:
           annotations:
             eks.amazonaws.com/role-arn: arn:aws:iam::511825856493:role/external-secrets-techx-tf4-cluster
@@ -89,14 +88,12 @@ spec:
         webhook:
           nodeSelector:
             role: worker
-            kubernetes.io/arch: amd64
           resources:
             requests: { cpu: 5m, memory: 32Mi }
             limits: { cpu: 50m, memory: 48Mi }
         certController:
           nodeSelector:
             role: worker
-            kubernetes.io/arch: amd64
           resources:
             requests: { cpu: 5m, memory: 48Mi }
             limits: { cpu: 50m, memory: 80Mi }
