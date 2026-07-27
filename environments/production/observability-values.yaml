@@ -22,7 +22,8 @@ jaeger: { enabled: true }
 prometheus:
   enabled: true
   server:
-    replicaCount: 0
+    nodeSelector:
+      role: worker
     resources:
       requests:
         cpu: 200m
