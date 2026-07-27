@@ -135,6 +135,26 @@ components:
               app.kubernetes.io/component: image-provider
 
   currency:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 70
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 30
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          selectPolicy: Min
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -142,11 +162,13 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: currency
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: currency
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
@@ -231,6 +253,26 @@ components:
               app.kubernetes.io/component: shipping
 
   product-catalog:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 30
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 30
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          selectPolicy: Min
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -238,11 +280,13 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: product-catalog
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: product-catalog
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
@@ -266,6 +310,29 @@ components:
     envOverrides:
       - name: PRODUCT_CATALOG_ADDR
         value: dns:///product-catalog-headless:8080
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 6
+      targetCPUUtilizationPercentage: 70
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+            - type: Pods
+              value: 2
+              periodSeconds: 30
+            - type: Percent
+              value: 100
+              periodSeconds: 30
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          selectPolicy: Min
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -273,11 +340,13 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: frontend
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: frontend
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
@@ -315,6 +384,26 @@ components:
   # pinned to the dead revision until promoted by hand).
   checkout:
     useRollout: false
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 70
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 30
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          selectPolicy: Min
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -322,11 +411,13 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: checkout
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: checkout
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
@@ -386,6 +477,29 @@ components:
   # envOverrides.
   cart:
     useRollout: false
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 70
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 30
+            - type: Percent
+              value: 100
+              periodSeconds: 30
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          selectPolicy: Min
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -393,11 +507,13 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: cart
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: cart
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
@@ -430,6 +546,29 @@ components:
         value: grafana.techx-observability.svc.cluster.local
       - name: JAEGER_HOST
         value: jaeger.techx-observability.svc.cluster.local
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 70
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 30
+            - type: Percent
+              value: 100
+              periodSeconds: 30
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          selectPolicy: Min
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -437,11 +576,13 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: frontend-proxy
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: frontend-proxy
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
