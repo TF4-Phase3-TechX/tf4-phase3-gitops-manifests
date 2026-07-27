@@ -79,6 +79,7 @@ spec:
         installCRDs: true
         nodeSelector:
           role: worker
+          kubernetes.io/arch: amd64
         serviceAccount:
           annotations:
             eks.amazonaws.com/role-arn: arn:aws:iam::511825856493:role/external-secrets-techx-tf4-cluster
@@ -88,12 +89,14 @@ spec:
         webhook:
           nodeSelector:
             role: worker
+            kubernetes.io/arch: amd64
           resources:
             requests: { cpu: 5m, memory: 32Mi }
             limits: { cpu: 50m, memory: 48Mi }
         certController:
           nodeSelector:
             role: worker
+            kubernetes.io/arch: amd64
           resources:
             requests: { cpu: 5m, memory: 48Mi }
             limits: { cpu: 50m, memory: 80Mi }
@@ -210,7 +213,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: e6f571ec7a5c746f06e686b0df5ccfc9a440c5ed
+      targetRevision: 8c10da36e70161d2d5dfcbd35fdc9b56c013324c
       path: techx-corp-chart
       ref: chart-source
       helm:
@@ -245,7 +248,7 @@ spec:
   project: techx-production
   sources:
     - repoURL: 'https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git'
-      targetRevision: e6f571ec7a5c746f06e686b0df5ccfc9a440c5ed
+      targetRevision: 8c10da36e70161d2d5dfcbd35fdc9b56c013324c
       path: techx-corp-chart
       ref: chart-source
       helm:
