@@ -757,11 +757,17 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: product-reviews
-              topologyKey: kubernetes.io/hostname
+          # The Spot NodePool is capped at two nodes. A required rule deadlocks
+          # a maxSurge rollout because the third pod has nowhere to schedule.
+          # Prefer host spreading so the steady state remains distributed while
+          # allowing one temporary co-location during a zero-unavailable rollout.
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: product-reviews
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
