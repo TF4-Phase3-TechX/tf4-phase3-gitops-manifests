@@ -17,8 +17,8 @@ components:
       digest: "sha256:7e816bc54aeb60354a0680a473d72080d01c6fe9f16b96f5a3573d1007f4ea51"
   checkout:
     imageOverride:
-      tag: "1b571ee-checkout"
-      digest: "sha256:acc2a5680358c07710c9b7254adf32ba55a072cf1165b29fbde0aa0f8f1b9df0"
+      tag: "ee2da6e-checkout"
+      digest: "sha256:6985b837588faa34e1755c9a318d1747b89d2917ecef828d2cc5ca1a78954006"
   currency:
     imageOverride:
       tag: "c2d7af2-currency"
