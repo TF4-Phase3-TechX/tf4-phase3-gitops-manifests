@@ -231,6 +231,26 @@ components:
               app.kubernetes.io/component: shipping
 
   product-catalog:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 30
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 30
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          selectPolicy: Min
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -238,11 +258,13 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: product-catalog
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: product-catalog
+                topologyKey: kubernetes.io/hostname
       tolerations:
         - key: optimization.techx.io/tier
           operator: Equal
