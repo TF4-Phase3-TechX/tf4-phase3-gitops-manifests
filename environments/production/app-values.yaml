@@ -764,17 +764,6 @@ components:
 
   product-reviews:
     replicas: 2
-    # TEMPORARY MANDATE-22 DRY-RUN CALIBRATION. AIOps remains dry-run with
-    # autonomous mutation disabled. Restore 75m/300m immediately after the
-    # bounded target-load window, regardless of whether the detector fires.
-    revisionHistoryLimit: 11
-    resources:
-      requests:
-        cpu: 25m
-        memory: 96Mi
-      limits:
-        cpu: 50m
-        memory: 192Mi
     strategy:
       type: RollingUpdate
       rollingUpdate:
