@@ -745,8 +745,11 @@ components:
     strategy:
       type: RollingUpdate
       rollingUpdate:
-        maxUnavailable: 0
-        maxSurge: 1
+        # Existing replicas still carry the previous required anti-affinity.
+        # Replace one at a time so a node is released before scheduling the
+        # new pod; the PDB retains one serving replica throughout the rollout.
+        maxUnavailable: 1
+        maxSurge: 0
     podDisruptionBudget:
       enabled: true
       minAvailable: 1
@@ -807,7 +810,11 @@ components:
       - name: BEDROCK_OUTPUT_MODE
         value: tool
       - name: BEDROCK_DEADLINE_SECONDS
-        value: "4.5"
+        # Two production smoke requests completed with safe fallback after
+        # about 8 seconds while fault-injection flags were off. Product-QA
+        # performs one provider call, so this adds latency headroom without
+        # increasing the number of billable Bedrock invocations.
+        value: "12"
       - name: BEDROCK_INPUT_USD_PER_MILLION
         value: "0.30"
       - name: BEDROCK_OUTPUT_USD_PER_MILLION
