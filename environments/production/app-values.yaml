@@ -397,7 +397,7 @@ components:
       - name: AIOPS_ALLOWED_DEPLOYMENTS
         value: product-reviews
       - name: AIOPS_KNOWN_GOOD_REVISIONS
-        value: product-reviews=81
+        value: product-reviews=83
       - name: AIOPS_SAGA_BACKEND
         value: file
       - name: AIOPS_SAGA_PATH
