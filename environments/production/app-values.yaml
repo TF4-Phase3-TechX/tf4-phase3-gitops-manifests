@@ -9,10 +9,11 @@ grafana: { enabled: false }
 opensearch: { enabled: false }
 metrics-server: { enabled: false }
 
-# Run the detector continuously while every production mutation path remains
-# disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
+# TEMPORARY MANDATE-22 LIVE SUCCESS-PATH WINDOW. Restore every independent
+# mutation gate and the constrained target immediately after evidence capture.
+# Targeted traffic is operator-controlled and is not encoded in GitOps.
 aiopsRemediation:
-  liveEnabled: false
+  liveEnabled: true
 
 default:
   envOverrides:
@@ -388,9 +389,13 @@ components:
           claimName: aiops-pvc
     envOverrides:
       - name: REMEDIATION_MODE
-        value: dry-run
+        value: live
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "false"
+        value: "true"
+      - name: AIOPS_ALLOWED_DEPLOYMENTS
+        value: product-reviews
+      - name: AIOPS_KNOWN_GOOD_REVISIONS
+        value: product-reviews=71
       - name: AIOPS_SAGA_BACKEND
         value: file
       - name: AIOPS_SAGA_PATH
@@ -764,6 +769,18 @@ components:
 
   product-reviews:
     replicas: 2
+    # TEMPORARY MANDATE-22 target. Dry-run V3 reproducibly produced a high
+    # latency incident at this resource envelope while keeping error rate zero,
+    # readiness 2/2 and Bedrock calls zero. Revision 71 is the CDO-pinned
+    # healthy rollback template.
+    revisionHistoryLimit: 11
+    resources:
+      requests:
+        cpu: 10m
+        memory: 96Mi
+      limits:
+        cpu: 10m
+        memory: 192Mi
     strategy:
       type: RollingUpdate
       rollingUpdate:
