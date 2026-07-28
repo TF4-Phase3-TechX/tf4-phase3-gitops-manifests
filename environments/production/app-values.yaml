@@ -764,6 +764,18 @@ components:
 
   product-reviews:
     replicas: 2
+    # TEMPORARY MANDATE-22 DRY-RUN CALIBRATION V3. V2 proved 10m/10m
+    # converges without restarts but needs over 8 minutes for both pods.
+    # Allow a 12-minute no-load rollout boundary, then use the unchanged
+    # bounded traffic envelope and restore 75m/300m after evidence capture.
+    revisionHistoryLimit: 11
+    resources:
+      requests:
+        cpu: 10m
+        memory: 96Mi
+      limits:
+        cpu: 10m
+        memory: 192Mi
     strategy:
       type: RollingUpdate
       rollingUpdate:
