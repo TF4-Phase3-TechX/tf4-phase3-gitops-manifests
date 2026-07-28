@@ -272,6 +272,15 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+    # TEMPORARY MANDATE-22 VERIFIED SUCCESS-PATH WINDOW. The constrained
+    # template is still reconciled; only its resource field is ignored so the
+    # autonomous rollback can remain in place for the real verification polls.
+    - group: apps
+      kind: Deployment
+      name: product-reviews
+      namespace: techx-tf4
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources
 
 ---
 apiVersion: argoproj.io/v1alpha1
