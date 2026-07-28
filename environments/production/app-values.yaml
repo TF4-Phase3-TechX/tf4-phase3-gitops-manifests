@@ -12,7 +12,7 @@ metrics-server: { enabled: false }
 # Run the detector continuously while every production mutation path remains
 # disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
 aiopsRemediation:
-  liveEnabled: false
+  liveEnabled: true
 
 default:
   envOverrides:
