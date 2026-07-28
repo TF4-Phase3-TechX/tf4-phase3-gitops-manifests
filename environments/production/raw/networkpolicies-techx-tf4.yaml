@@ -860,8 +860,8 @@ metadata:
   annotations:
     cdo08.techx.io/external-egress-owner: "CDO08-SEC-21"
     cdo08.techx.io/external-egress-expiry: "2026-08-21"
-    cdo08.techx.io/external-egress-reason: "Product-reviews uses EKS Pod Identity for Bedrock and the approved private ElastiCache/Valkey path for Copilot state; allow only those bounded destinations, not broad internet egress."
-    cdo08.techx.io/bedrock-egress-status: "Bedrock runtime FQDN egress remains deferred; standard Kubernetes NetworkPolicy cannot safely express AWS Bedrock FQDN allowlist."
+    cdo08.techx.io/external-egress-reason: "Product-reviews uses EKS Pod Identity and the Terraform-managed Bedrock Runtime Interface VPC Endpoint; allow HTTPS only within the endpoint's private subnets, not broad internet egress."
+    cdo08.techx.io/bedrock-egress-status: "Private Bedrock Runtime egress approved; depends on tf4-phase3-repo#731 creating the Interface VPC Endpoint with private DNS."
 spec:
   podSelector:
     matchLabels:
@@ -917,6 +917,14 @@ spec:
       ports:
         - protocol: TCP
           port: 80
+    - to:
+        - ipBlock:
+            cidr: 10.0.10.0/24
+        - ipBlock:
+            cidr: 10.0.11.0/24
+      ports:
+        - protocol: TCP
+          port: 443
 
 ---
 apiVersion: networking.k8s.io/v1
