@@ -824,6 +824,12 @@ components:
           secretKeyRef:
             name: product-reviews-bedrock-canary
             key: marker
+      # Temporary runtime recovery: Mandate 24 intentionally fails startup
+      # without its dedicated hash salt. Keep the contract disabled until CDO
+      # provisions product-reviews-llm-observability/hash-salt, then replace
+      # this value with the reviewed secretKeyRef and re-enable it.
+      - name: LLM_OBSERVABILITY_ENABLED
+        value: "false"
       - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
         value: "false"
     securityContext:
