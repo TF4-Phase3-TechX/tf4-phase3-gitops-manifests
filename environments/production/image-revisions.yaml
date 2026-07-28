@@ -52,8 +52,8 @@ components:
       digest: "sha256:bee51a6643b3c76ad76eb96deb029fd39632fb45a53138c77e20973d1794cdc4"
   load-generator:
     imageOverride:
-      tag: "181bf50-load-generator"
-      digest: "sha256:0ccd1a8229a60d56a26259f717a4452e87bfc3d599ca2e80049b6e9ed0044e18"
+      tag: "1c43304-load-generator"
+      digest: "sha256:761109809993071e063e75e830fb203e34f1573ccf8639bc587150a14cb69ce1"
   payment:
     imageOverride:
       tag: "b6e223a-payment"
