@@ -368,11 +368,33 @@ components:
 
   aiops:
     enabled: true
+    # Mandate 22 persists remediation intent before live activation. Recreate
+    # avoids a ReadWriteOnce multi-attach race during the single-replica rollout.
+    strategy:
+      type: Recreate
+    persistence:
+      enabled: true
+      storageClassName: gp3-retain
+      size: 1Gi
+    podSecurityContext:
+      fsGroup: 65532
+      fsGroupChangePolicy: OnRootMismatch
+    additionalVolumeMounts:
+      - name: aiops-saga
+        mountPath: /var/lib/aiops/sagas
+    additionalVolumes:
+      - name: aiops-saga
+        persistentVolumeClaim:
+          claimName: aiops-pvc
     envOverrides:
       - name: REMEDIATION_MODE
         value: dry-run
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
         value: "false"
+      - name: AIOPS_SAGA_BACKEND
+        value: file
+      - name: AIOPS_SAGA_PATH
+        value: /var/lib/aiops/sagas
       - name: OPENSEARCH_URL
         value: http://opensearch.techx-observability.svc.cluster.local:9200
 
