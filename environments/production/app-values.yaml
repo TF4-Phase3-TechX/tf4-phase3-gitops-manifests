@@ -12,7 +12,7 @@ metrics-server: { enabled: false }
 # Run the detector continuously while every production mutation path remains
 # disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
 aiopsRemediation:
-  liveEnabled: true
+  liveEnabled: false
 
 default:
   envOverrides:
@@ -397,16 +397,6 @@ components:
         value: /var/lib/aiops/sagas
       - name: OPENSEARCH_URL
         value: http://opensearch.techx-observability.svc.cluster.local:9200
-    # TEMPORARY M22-V7 RECOVERY WINDOW. Startup reconciliation performs the
-    # unchanged 150s settle plus three 20s verification polls before the API
-    # binds. Keep kubelet from killing that bounded resume; restore to the
-    # chart-default 10s delay immediately after the saga reaches terminal state.
-    livenessProbe:
-      httpGet:
-        path: /healthz
-        port: 8080
-      initialDelaySeconds: 300
-      periodSeconds: 15
 
   # CDO08-REL-17 Blue-Green cutover window is over; useRollout reverted to the
   # chart default (false, plain Deployment/RollingUpdate) — see
