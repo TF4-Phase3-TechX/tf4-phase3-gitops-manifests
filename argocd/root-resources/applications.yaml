@@ -272,6 +272,15 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+    # TEMPORARY MANDATE-22 LIVE SUCCESS-PATH WINDOW. The constrained template
+    # remains desired; only container resources are ignored while AIOps rolls
+    # back to the pinned healthy revision and verifies real telemetry.
+    - group: apps
+      kind: Deployment
+      name: product-reviews
+      namespace: techx-tf4
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources
 
 ---
 apiVersion: argoproj.io/v1alpha1
