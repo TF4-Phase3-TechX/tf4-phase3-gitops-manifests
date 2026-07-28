@@ -764,6 +764,18 @@ components:
 
   product-reviews:
     replicas: 2
+    # TEMPORARY MANDATE-22 DRY-RUN CALIBRATION V2. V1 at 25m/50m produced
+    # about 357-389ms p95 with 20% CPU throttling, below the 1s detector floor.
+    # Keep the reviewed traffic envelope unchanged and restore 75m/300m after
+    # evidence capture whether or not the detector fires.
+    revisionHistoryLimit: 11
+    resources:
+      requests:
+        cpu: 10m
+        memory: 96Mi
+      limits:
+        cpu: 10m
+        memory: 192Mi
     strategy:
       type: RollingUpdate
       rollingUpdate:
