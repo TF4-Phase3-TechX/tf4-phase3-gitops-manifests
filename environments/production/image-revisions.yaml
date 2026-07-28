@@ -33,8 +33,8 @@ components:
       digest: "sha256:707ba8f4d27be11967dd835be5484ea33a84f2544f4c8a64e046981b5a254508"
   frontend:
     imageOverride:
-      tag: "8c10da3-frontend"
-      digest: "sha256:85a3df678d7ce78b4bd8862ece089d89ebf2a16c6465009e0ae5cac3bda78c95"
+      tag: "405fd07-frontend"
+      digest: "sha256:25cabf253f27a0e4d601d0b0bc9659ecc70ab5972f1252bfe29fbb5da042ae7b"
   frontend-proxy:
     imageOverride:
       tag: "1b571ee-frontend-proxy"
@@ -64,8 +64,8 @@ components:
       digest: "sha256:20a10764f0d4dfa7821b8e36aaf86b04cd400f5590eedfdd6502980dfe4901a3"
   product-reviews:
     imageOverride:
-      tag: "2b03bba-product-reviews"
-      digest: "sha256:3041b1276d6b542f6300c34fdf3f44070d668199f7dee73b6aeb947793f471fe"
+      tag: "405fd07-product-reviews"
+      digest: "sha256:d301bf0d3a59688a3d2344a613455e921463a202078bc4b3d8dc4ad619222fc2"
   quote:
     imageOverride:
       tag: "5f62ab9-quote"
