@@ -9,11 +9,10 @@ grafana: { enabled: false }
 opensearch: { enabled: false }
 metrics-server: { enabled: false }
 
-# TEMPORARY MANDATE-22 V8 LIVE SUCCESS-PATH WINDOW. Restore every independent
-# mutation gate and the constrained target immediately after evidence capture.
-# Targeted traffic is operator-controlled and is not encoded in GitOps.
-# Before load, require mutation-block=false, no open saga, healthy telemetry,
-# zero LLM calls, and a reviewed two-phase restore path.
+# MANDATE-22 V8 RESTORE PHASE 1. The target fault and Argo resource exception
+# are removed while cleanup RBAC/runtime gates remain live. Merge phase 2 only
+# after the saga is terminal, mutation-block=false, lease_held=false, and
+# argo_window_active=false.
 aiopsRemediation:
   liveEnabled: true
 
@@ -771,17 +770,6 @@ components:
 
   product-reviews:
     replicas: 2
-    # TEMPORARY MANDATE-22 V8 target. Revision 86 is the retained healthy
-    # 9896be4 template at 75m/300m. AIOps image 9d544d8 keeps liveness open
-    # during startup recovery while readiness stays closed until saga terminal.
-    revisionHistoryLimit: 11
-    resources:
-      requests:
-        cpu: 10m
-        memory: 96Mi
-      limits:
-        cpu: 10m
-        memory: 192Mi
     strategy:
       type: RollingUpdate
       rollingUpdate:
