@@ -12,7 +12,9 @@ metrics-server: { enabled: false }
 # Run the detector continuously while every production mutation path remains
 # disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
 aiopsRemediation:
-  liveEnabled: false
+  # M22 bounded production drill only. This grants the AIOps service account
+  # Deployment template patch permission; the paired restore removes it.
+  liveEnabled: true
 
 default:
   envOverrides:
@@ -388,9 +390,13 @@ components:
           claimName: aiops-pvc
     envOverrides:
       - name: REMEDIATION_MODE
-        value: dry-run
+        value: live
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "false"
+        value: "true"
+      - name: AIOPS_AUTONOMOUS_RUNBOOKS
+        value: deployment-latency-rollback
+      - name: AIOPS_ALLOWED_DEPLOYMENTS
+        value: product-reviews
       - name: AIOPS_SAGA_BACKEND
         value: file
       - name: AIOPS_SAGA_PATH
@@ -823,6 +829,15 @@ components:
       failureThreshold: 30
       successThreshold: 1
     envOverrides:
+      # M22 drill fault: all three bounds are required, so partial or invalid
+      # configuration fails closed. Revision 93 is the observed healthy
+      # predecessor; this template change creates the rollback candidate.
+      - name: MANDATE22_REVIEW_DELAY_MS
+        value: "2500"
+      - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
+        value: "900"
+      - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
+        value: "60"
       - name: AWS_REGION
         value: us-east-1
       - name: BEDROCK_MODEL_ID
