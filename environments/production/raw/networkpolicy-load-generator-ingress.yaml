@@ -11,8 +11,14 @@ spec:
       app.kubernetes.io/component: load-generator
   policyTypes:
     - Ingress
-  # TEMPORARY MANDATE-22 V10 exclusive load-control window. Deny the
-  # Cloudflare UI path so no external browser can issue an unrecorded /swarm.
-  # Kubernetes NetworkPolicy does not block loopback, so the named operator
-  # can still drive Locust through audited `kubectl exec` localhost requests.
-  ingress: []
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cloudflare-access
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: cloudflared
+      ports:
+        - protocol: TCP
+          port: 8089
