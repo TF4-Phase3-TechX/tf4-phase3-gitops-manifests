@@ -831,6 +831,14 @@ components:
       failureThreshold: 30
       successThreshold: 1
     envOverrides:
+      # M22 bounded user-RPC latency fault. The lazy TTL starts on the first
+      # eligible review request; health checks never consume the request cap.
+      - name: MANDATE22_REVIEW_DELAY_MS
+        value: "2500"
+      - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
+        value: "900"
+      - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
+        value: "60"
       - name: AWS_REGION
         value: us-east-1
       - name: BEDROCK_MODEL_ID
