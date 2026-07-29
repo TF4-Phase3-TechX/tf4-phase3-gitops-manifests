@@ -823,6 +823,15 @@ components:
       failureThreshold: 30
       successThreshold: 1
     envOverrides:
+      # M22 phase 1: prime a revision-coupled latency signal while AIOps stays
+      # dry-run. In image 686786b the TTL begins on the first eligible request,
+      # so review/approval time cannot consume this bounded drill window.
+      - name: MANDATE22_REVIEW_DELAY_MS
+        value: "2500"
+      - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
+        value: "900"
+      - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
+        value: "60"
       - name: AWS_REGION
         value: us-east-1
       - name: BEDROCK_MODEL_ID
