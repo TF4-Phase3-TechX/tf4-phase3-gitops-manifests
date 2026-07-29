@@ -272,16 +272,6 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
-    # M22 bounded production drill only. AIOps rolls product-reviews back by
-    # patching its pod template; ignore that exact field on that exact target so
-    # Argo does not immediately self-heal the approved remediation. The paired
-    # restore removes this exception after evidence capture.
-    - group: apps
-      kind: Deployment
-      name: product-reviews
-      namespace: techx-tf4
-      jsonPointers:
-        - /spec/template
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
