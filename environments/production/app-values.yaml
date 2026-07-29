@@ -558,7 +558,10 @@ components:
   load-generator:
     envOverrides:
       - name: LOCUST_AUTOSTART
-        value: "true"
+        # TEMPORARY MANDATE-22 V10 exclusive load-control window. Keep the
+        # Locust web process available, but never start users after a pod
+        # restart; the recorded operator drives localhost /swarm explicitly.
+        value: "false"
 
   frontend-proxy:
     envOverrides:
