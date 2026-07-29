@@ -272,14 +272,6 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
-    # TEMPORARY MANDATE-22 V9 LIVE WINDOW. The staged 25m/50m template
-    # remains desired while AIOps may restore the pinned healthy resources.
-    - group: apps
-      kind: Deployment
-      name: product-reviews
-      namespace: techx-tf4
-      jsonPointers:
-        - /spec/template/spec/containers/0/resources
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
