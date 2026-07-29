@@ -772,18 +772,6 @@ components:
 
   product-reviews:
     replicas: 2
-    # TEMPORARY MANDATE-22 V10 FAULT-STAGING PHASE. AIOps remains dry-run and
-    # autonomous mutation remains disabled while this 25m/50m template rolls
-    # out. Do not open the live window until 2/2 replicas are Ready and two
-    # detector cycles show no active availability incident.
-    revisionHistoryLimit: 11
-    resources:
-      requests:
-        cpu: 25m
-        memory: 96Mi
-      limits:
-        cpu: 50m
-        memory: 192Mi
     strategy:
       type: RollingUpdate
       rollingUpdate:
