@@ -12,7 +12,9 @@ metrics-server: { enabled: false }
 # Run the detector continuously while every production mutation path remains
 # disabled until ADR-022 has named CDO/on-call approval and a live-drill window.
 aiopsRemediation:
-  liveEnabled: false
+  # M22 attended live verification window. Product-reviews revision 95 is the
+  # retained, fault-free known-good target; revision 97 must never be selected.
+  liveEnabled: true
 
 default:
   envOverrides:
@@ -388,9 +390,15 @@ components:
           claimName: aiops-pvc
     envOverrides:
       - name: REMEDIATION_MODE
-        value: dry-run
+        value: live
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "false"
+        value: "true"
+      - name: AIOPS_AUTONOMOUS_RUNBOOKS
+        value: deployment-latency-rollback
+      - name: AIOPS_ALLOWED_DEPLOYMENTS
+        value: product-reviews
+      - name: AIOPS_KNOWN_GOOD_REVISIONS
+        value: product-reviews=95
       - name: AIOPS_SAGA_BACKEND
         value: file
       - name: AIOPS_SAGA_PATH
