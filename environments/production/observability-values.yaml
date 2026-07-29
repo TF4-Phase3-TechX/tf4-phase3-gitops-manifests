@@ -55,13 +55,7 @@ grafana:
           app.kubernetes.io/instance: techx-observability
   nodeSelector:
     kubernetes.io/arch: arm64
-    karpenter.sh/capacity-type: on-demand
-    optimization.techx.io/tier: arm64-protected
-  tolerations:
-    - key: optimization.techx.io/tier
-      operator: Equal
-      value: arm64-protected
-      effect: NoSchedule
+    optimization.techx.io/tier: protected
 
 opensearch:
   enabled: true
