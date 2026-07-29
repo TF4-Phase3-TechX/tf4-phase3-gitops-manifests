@@ -272,6 +272,15 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+    # M22 attended drill only. The bounded fault is already deployed at
+    # revision 97; ignore the exact target template so Argo does not race AIOps
+    # when it restores retained healthy revision 96.
+    - group: apps
+      kind: Deployment
+      name: product-reviews
+      namespace: techx-tf4
+      jsonPointers:
+        - /spec/template
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
