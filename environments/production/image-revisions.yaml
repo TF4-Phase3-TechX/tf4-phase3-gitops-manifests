@@ -1,8 +1,8 @@
 components:
   aiops:
     imageOverride:
-      tag: "79f974e-aiops"
-      digest: "sha256:13359888e6233d03708514c7aa169b0608e72af1271b4a25897ae683b3b0fd6b"
+      tag: "9d544d8-aiops"
+      digest: "sha256:a5ef0b5e34cb4a83eae0759b816fdfc82d4d3e6c210cc2752090fe32469dc36c"
   accounting:
     imageOverride:
       tag: "f215443-accounting"
@@ -64,8 +64,8 @@ components:
       digest: "sha256:20a10764f0d4dfa7821b8e36aaf86b04cd400f5590eedfdd6502980dfe4901a3"
   product-reviews:
     imageOverride:
-      tag: "405fd07-product-reviews"
-      digest: "sha256:d301bf0d3a59688a3d2344a613455e921463a202078bc4b3d8dc4ad619222fc2"
+      tag: "9896be4-product-reviews"
+      digest: "sha256:ef513c8677c91127b675b55838053f5d35ed354c280532d3bdbab1ea59424462"
   quote:
     imageOverride:
       tag: "5f62ab9-quote"
