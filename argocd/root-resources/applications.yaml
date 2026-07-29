@@ -272,14 +272,6 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
-    # M22 attended live verification window. AIOps may change only this
-    # Deployment template and is pinned to retained healthy revision 95.
-    - group: apps
-      kind: Deployment
-      name: product-reviews
-      namespace: techx-tf4
-      jsonPointers:
-        - /spec/template
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
