@@ -844,15 +844,15 @@ components:
       successThreshold: 1
     envOverrides:
       # Mandate 22 success drill: bounded latency only on review-RPC requests.
-      # The fault expires after 15 minutes or 240 eligible requests. Production
-      # ambient review traffic is about 48 requests/minute, so this remains
-      # bounded while spanning detection, guarded PR merge, and Argo rollout.
+      # Each of the two replicas expires after 15 minutes or the application
+      # hard cap of 200 eligible requests. At about 48 requests/minute across
+      # both replicas this remains bounded while allowing the guarded flow.
       - name: MANDATE22_REVIEW_DELAY_MS
         value: "2500"
       - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
         value: "900"
       - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
-        value: "240"
+        value: "200"
       - name: AWS_REGION
         value: us-east-1
       - name: BEDROCK_MODEL_ID
