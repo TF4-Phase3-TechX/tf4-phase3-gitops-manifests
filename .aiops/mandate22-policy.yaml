@@ -1,0 +1,30 @@
+policyVersion: m22-gitops-v1
+incidentType: service_latency_spike
+runbook: product-reviews-config-rollback
+repository: TF4-Phase3-TechX/tf4-phase3-gitops-manifests
+baseBranch: main
+targetFile: environments/production/app-values.yaml
+component: product-reviews
+managedEnvNames:
+  - MANDATE22_REVIEW_DELAY_MS
+  - MANDATE22_REVIEW_DELAY_TTL_SECONDS
+  - MANDATE22_REVIEW_DELAY_MAX_REQUESTS
+knownGoodCommit: adbbd6caa166fa0247d6e6f3437dc936aa443b39
+requiredChecks:
+  - validate
+  - check-pinned-dependencies
+  - aiops-remediation-policy
+githubAppLogin: gitops-promotion-bot-tf4[bot]
+correlationAnnotation: aiops.techx.io/remediation-id
+timeboxedDemoProfile:
+  enabled: true
+  creatorLogin: c0mmie-b0msh3ll
+  reviewerLogin: tdinhthong127
+  mergeStrategy: dual-token
+  expiresAt: "2026-08-01T16:59:59Z"
+  reason: missing-org-app-manager-and-time-boxed-demo
+forcedWrongProfile:
+  enabled: false
+  incidentId: ""
+  expiresAt: "1970-01-01T00:00:00Z"
+  allowedDelta: correlation_annotation_only

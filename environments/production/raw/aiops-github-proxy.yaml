@@ -1,0 +1,192 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aiops-github-proxy
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/component: aiops-github-proxy
+data:
+  squid.conf: |
+    http_port 3128
+    acl CONNECT method CONNECT
+    acl TLS port 443
+    acl github_api dstdomain api.github.com
+    http_access allow CONNECT github_api TLS
+    http_access deny all
+    access_log stdio:/dev/stdout
+    cache deny all
+    coredump_dir /var/spool/squid
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiops-github-proxy
+  namespace: techx-tf4
+  labels:
+    app.kubernetes.io/component: aiops-github-proxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: aiops-github-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: aiops-github-proxy
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 13
+        runAsGroup: 13
+        fsGroup: 13
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: squid
+          image: ubuntu/squid:6.6-24.04_beta@sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029
+          args: ["-N", "-f", "/etc/squid/squid.conf"]
+          ports:
+            - name: proxy
+              containerPort: 3128
+          readinessProbe:
+            tcpSocket:
+              port: proxy
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: proxy
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 25m, memory: 64Mi}
+            limits: {cpu: 200m, memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: config
+              mountPath: /etc/squid/squid.conf
+              subPath: squid.conf
+              readOnly: true
+            - name: run
+              mountPath: /run
+            - name: spool
+              mountPath: /var/spool/squid
+            - name: cache
+              mountPath: /var/cache/squid
+            - name: logs
+              mountPath: /var/log/squid
+      volumes:
+        - name: config
+          configMap:
+            name: aiops-github-proxy
+        - name: run
+          emptyDir: {}
+        - name: spool
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiops-github-proxy
+  namespace: techx-tf4
+spec:
+  selector:
+    app.kubernetes.io/component: aiops-github-proxy
+  ports:
+    - name: proxy
+      port: 3128
+      targetPort: proxy
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aiops-github-proxy-ingress
+  namespace: techx-tf4
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: aiops-github-proxy
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: aiops
+      ports:
+        - protocol: TCP
+          port: 3128
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aiops-github-proxy-egress
+  namespace: techx-tf4
+  annotations:
+    cdo08.techx.io/external-egress-owner: "CDO"
+    cdo08.techx.io/external-egress-reason: "Squid CONNECT policy permits only api.github.com:443; AIOps cannot reach public egress directly."
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: aiops-github-proxy
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - protocol: TCP
+          port: 443
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aiops-github-only-egress
+  namespace: techx-tf4
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: aiops
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: aiops-github-proxy
+      ports:
+        - protocol: TCP
+          port: 3128
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: techx-observability
+      ports:
+        - protocol: TCP
+          port: 9090
+        - protocol: TCP
+          port: 9200

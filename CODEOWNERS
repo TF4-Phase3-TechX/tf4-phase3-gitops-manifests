@@ -1,3 +1,6 @@
 ﻿/argocd/      @TF4-Phase3-TechX/platform-owners
 /platform/    @TF4-Phase3-TechX/platform-owners
 /environments/ @TF4-Phase3-TechX/platform-owners
+/.aiops/      @TF4-Phase3-TechX/platform-owners
+/.github/     @TF4-Phase3-TechX/platform-owners
+/scripts/     @TF4-Phase3-TechX/platform-owners
