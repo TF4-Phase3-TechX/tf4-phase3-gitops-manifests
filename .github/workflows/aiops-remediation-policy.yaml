@@ -1,0 +1,62 @@
+name: AIOps remediation policy
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  aiops-remediation-policy:
+    name: aiops-remediation-policy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitOps base and pull request
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read protected chart revision
+        id: chart
+        run: |
+          revision="$(python - <<'PY'
+          import subprocess, yaml
+          raw = subprocess.check_output(
+              ["git", "show", "origin/main:argocd/root-resources/applications.yaml"],
+              text=True,
+          )
+          for app in yaml.safe_load_all(raw):
+              for source in (app or {}).get("spec", {}).get("sources", []):
+                  if source.get("repoURL") == "https://github.com/TF4-Phase3-TechX/tf4-phase3-repo.git":
+                      print(source["targetRevision"])
+                      raise SystemExit
+          raise SystemExit("source chart revision not found")
+          PY
+          )"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+      - name: Checkout protected source chart
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: TF4-Phase3-TechX/tf4-phase3-repo
+          ref: ${{ steps.chart.outputs.revision }}
+          path: source-repo
+      - name: Set up Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4
+        with:
+          version: v3.14.0
+      - name: Install policy dependencies
+        run: pip install PyYAML==6.0.3
+      - name: Validate bot identity, semantic YAML and rendered delta
+        env:
+          PR_ACTOR: ${{ github.event.pull_request.user.login }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/aiops_remediation_policy.py --self-test
+          python scripts/aiops_remediation_policy.py \
+            --base origin/main \
+            --head HEAD \
+            --chart-dir source-repo/techx-corp-chart

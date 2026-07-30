@@ -14,6 +14,8 @@ jobs:
         run: pip install PyYAML
       - name: Validate GitOps manifests
         run: python scripts/validate.py
+      - name: Validate AIOps ruleset bootstrap contract
+        run: python scripts/bootstrap_aiops_rulesets.py --self-test
       - name: Read deployed chart revision
         id: chart
         run: |
