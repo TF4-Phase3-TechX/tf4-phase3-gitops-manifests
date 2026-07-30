@@ -377,40 +377,38 @@ components:
     additionalVolumeMounts:
       - name: aiops-saga
         mountPath: /var/lib/aiops/sagas
-      - name: aiops-github-app
-        mountPath: /var/run/secrets/github-app
+      - name: aiops-github-demo
+        mountPath: /var/run/secrets/github-demo
         readOnly: true
     additionalVolumes:
       - name: aiops-saga
         persistentVolumeClaim:
           claimName: aiops-pvc
-      - name: aiops-github-app
+      - name: aiops-github-demo
         secret:
-          secretName: aiops-github-app
+          secretName: aiops-github-demo-tokens
           defaultMode: 0400
     envOverrides:
       - name: REMEDIATION_MODE
-        value: gitops/dry-run
+        value: gitops/live
       - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "false"
+        value: "true"
       - name: AIOPS_REMEDIATION_POLICY_VERSION
         value: m22-gitops-v1
       - name: AIOPS_AUTONOMOUS_RUNBOOKS
         value: product-reviews-config-rollback
       - name: AIOPS_ALLOWED_DEPLOYMENTS
         value: product-reviews
-      - name: AIOPS_GITHUB_APP_ID
-        valueFrom:
-          secretKeyRef:
-            name: aiops-github-app
-            key: app-id
-      - name: AIOPS_GITHUB_APP_INSTALLATION_ID
-        valueFrom:
-          secretKeyRef:
-            name: aiops-github-app
-            key: installation-id
-      - name: AIOPS_GITHUB_APP_PRIVATE_KEY_PATH
-        value: /var/run/secrets/github-app/private-key.pem
+      - name: AIOPS_GITHUB_AUTH_MODE
+        value: token-files
+      - name: AIOPS_GITOPS_MERGE_STRATEGY
+        value: dual-token
+      - name: AIOPS_GITHUB_CREATOR_LOGIN
+        value: c0mmie-b0msh3ll
+      - name: AIOPS_GITHUB_REVIEWER_LOGIN
+        value: tdinhthong127
+      - name: AIOPS_TIMEBOXED_DEMO_ACKNOWLEDGED
+        value: "true"
       - name: AIOPS_GITHUB_PROXY_URL
         value: http://aiops-github-proxy:3128
       - name: AIOPS_SAGA_BACKEND
