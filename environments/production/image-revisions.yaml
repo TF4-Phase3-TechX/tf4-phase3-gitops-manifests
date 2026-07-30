@@ -1,8 +1,8 @@
 components:
   aiops:
     imageOverride:
-      tag: "469585b-aiops"
-      digest: "sha256:85cbe08509c4c7e2e40cdf3031fee4f57eccb8faea102acb120eeb2bd3dccff3"
+      tag: "f005190-aiops"
+      digest: "sha256:393ef323fd364a263db5ac88f3ee17ab615d2ce20cabc8a46985fba64ec671bc"
   accounting:
     imageOverride:
       tag: "f215443-accounting"
