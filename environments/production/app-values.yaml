@@ -1,19 +1,19 @@
-# Team tách nhau trong Grafana theo k8s.namespace.name (collector chung tự gắn).
-# TUNE khi deploy lần đầu: xác nhận OTEL_COLLECTOR_NAME override ăn.
-
-# Disable dependency sub-charts (root-level per chart schema)
-opentelemetry-collector: { enabled: false }
-jaeger: { enabled: false }
-prometheus: { enabled: false }
-grafana: { enabled: false }
-opensearch: { enabled: false }
-metrics-server: { enabled: false }
-
+opentelemetry-collector:
+  enabled: false
+jaeger:
+  enabled: false
+prometheus:
+  enabled: false
+grafana:
+  enabled: false
+opensearch:
+  enabled: false
+metrics-server:
+  enabled: false
 default:
   envOverrides:
-    - name: OTEL_COLLECTOR_NAME
-      value: otel-collector.techx-observability.svc.cluster.local
-
+  - name: OTEL_COLLECTOR_NAME
+    value: otel-collector.techx-observability.svc.cluster.local
 components:
   ad:
     replicas: 2
@@ -48,29 +48,28 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: ad
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: ad
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: ad
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: ad
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: ad
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: ad
   image-provider:
     replicas: 2
     strategy:
@@ -106,29 +105,28 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: image-provider
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: image-provider
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: image-provider
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: image-provider
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: image-provider
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: image-provider
   currency:
     autoscaling:
       enabled: true
@@ -140,16 +138,16 @@ components:
           stabilizationWindowSeconds: 0
           selectPolicy: Max
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 30
+          - type: Pods
+            value: 1
+            periodSeconds: 30
         scaleDown:
           stabilizationWindowSeconds: 300
           selectPolicy: Min
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 60
+          - type: Pods
+            value: 1
+            periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -158,31 +156,30 @@ components:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/component: currency
-                topologyKey: kubernetes.io/hostname
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: currency
+              topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: currency
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: currency
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: currency
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: currency
   quote:
     schedulingRules:
       nodeSelector:
@@ -192,29 +189,28 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: quote
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: quote
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: quote
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: quote
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: quote
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: quote
   shipping:
     schedulingRules:
       nodeSelector:
@@ -224,15 +220,15 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: shipping
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: shipping
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: topology.kubernetes.io/zone
@@ -258,16 +254,16 @@ components:
           stabilizationWindowSeconds: 0
           selectPolicy: Max
           policies:
-            - type: Percent
-              value: 100
-              periodSeconds: 30
+          - type: Percent
+            value: 100
+            periodSeconds: 30
         scaleDown:
           stabilizationWindowSeconds: 300
           selectPolicy: Min
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 60
+          - type: Pods
+            value: 1
+            periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -276,35 +272,34 @@ components:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/component: product-catalog
-                topologyKey: kubernetes.io/hostname
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: product-catalog
+              topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: product-catalog
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: product-catalog
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: product-catalog
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: product-catalog
   frontend:
     envOverrides:
-      - name: PRODUCT_CATALOG_ADDR
-        value: dns:///product-catalog-headless:8080
+    - name: PRODUCT_CATALOG_ADDR
+      value: dns:///product-catalog-headless:8080
     autoscaling:
       enabled: true
       minReplicas: 2
@@ -315,19 +310,19 @@ components:
           stabilizationWindowSeconds: 0
           selectPolicy: Max
           policies:
-            - type: Pods
-              value: 2
-              periodSeconds: 30
-            - type: Percent
-              value: 100
-              periodSeconds: 30
+          - type: Pods
+            value: 2
+            periodSeconds: 30
+          - type: Percent
+            value: 100
+            periodSeconds: 30
         scaleDown:
           stabilizationWindowSeconds: 300
           selectPolicy: Min
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 60
+          - type: Pods
+            value: 1
+            periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -336,35 +331,32 @@ components:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/component: frontend
-                topologyKey: kubernetes.io/hostname
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: frontend
+              topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: frontend
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: frontend
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: frontend
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: frontend
   aiops:
     enabled: true
-    # Mandate 22 persists remediation intent before live activation. Recreate
-    # avoids a ReadWriteOnce multi-attach race during the single-replica rollout.
     strategy:
       type: Recreate
     persistence:
@@ -375,55 +367,50 @@ components:
       fsGroup: 65532
       fsGroupChangePolicy: OnRootMismatch
     additionalVolumeMounts:
-      - name: aiops-saga
-        mountPath: /var/lib/aiops/sagas
-      - name: aiops-github-demo
-        mountPath: /var/run/secrets/github-demo
-        readOnly: true
+    - name: aiops-saga
+      mountPath: /var/lib/aiops/sagas
+    - name: aiops-github-demo
+      mountPath: /var/run/secrets/github-demo
+      readOnly: true
     additionalVolumes:
-      - name: aiops-saga
-        persistentVolumeClaim:
-          claimName: aiops-pvc
-      - name: aiops-github-demo
-        secret:
-          secretName: aiops-github-demo-tokens
-          defaultMode: 0400
+    - name: aiops-saga
+      persistentVolumeClaim:
+        claimName: aiops-pvc
+    - name: aiops-github-demo
+      secret:
+        secretName: aiops-github-demo-tokens
+        defaultMode: 256
     envOverrides:
-      - name: REMEDIATION_MODE
-        value: gitops/live
-      - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
-        value: "true"
-      - name: AIOPS_REMEDIATION_POLICY_VERSION
-        value: m22-gitops-v1
-      - name: AIOPS_AUTONOMOUS_RUNBOOKS
-        value: product-reviews-config-rollback
-      - name: AIOPS_ALLOWED_DEPLOYMENTS
-        value: product-reviews
-      - name: AIOPS_GITHUB_AUTH_MODE
-        value: token-files
-      - name: AIOPS_GITOPS_MERGE_STRATEGY
-        value: dual-token
-      - name: AIOPS_GITHUB_CREATOR_LOGIN
-        value: c0mmie-b0msh3ll
-      - name: AIOPS_GITHUB_REVIEWER_LOGIN
-        value: tdinhthong127
-      - name: AIOPS_TIMEBOXED_DEMO_ACKNOWLEDGED
-        value: "true"
-      - name: AIOPS_GITHUB_PROXY_URL
-        value: http://aiops-github-proxy:3128
-      - name: AIOPS_SAGA_BACKEND
-        value: file
-      - name: AIOPS_SAGA_PATH
-        value: /var/lib/aiops/sagas
-      - name: OPENSEARCH_URL
-        value: http://opensearch.techx-observability.svc.cluster.local:9200
-
-  # CDO08-REL-17 Blue-Green cutover window is over; useRollout reverted to the
-  # chart default (false, plain Deployment/RollingUpdate) — see
-  # docs/audit/postmortems/incident-20260723-image-pruning-cve-gate-and-flagd-sync.md.
-  # Blue-Green's manual `promote` step was a direct contributor to that
-  # incident's recovery time (new pods were healthy but Service traffic stayed
-  # pinned to the dead revision until promoted by hand).
+    - name: REMEDIATION_MODE
+      value: gitops/live
+    - name: AIOPS_AUTONOMOUS_REMEDIATION_ENABLED
+      value: 'true'
+    - name: AIOPS_POLL_SECONDS
+      value: '46'
+    - name: AIOPS_REMEDIATION_POLICY_VERSION
+      value: m22-gitops-v1
+    - name: AIOPS_AUTONOMOUS_RUNBOOKS
+      value: product-reviews-config-rollback
+    - name: AIOPS_ALLOWED_DEPLOYMENTS
+      value: product-reviews
+    - name: AIOPS_GITHUB_AUTH_MODE
+      value: token-files
+    - name: AIOPS_GITOPS_MERGE_STRATEGY
+      value: dual-token
+    - name: AIOPS_GITHUB_CREATOR_LOGIN
+      value: c0mmie-b0msh3ll
+    - name: AIOPS_GITHUB_REVIEWER_LOGIN
+      value: tdinhthong127
+    - name: AIOPS_TIMEBOXED_DEMO_ACKNOWLEDGED
+      value: 'true'
+    - name: AIOPS_GITHUB_PROXY_URL
+      value: http://aiops-github-proxy:3128
+    - name: AIOPS_SAGA_BACKEND
+      value: file
+    - name: AIOPS_SAGA_PATH
+      value: /var/lib/aiops/sagas
+    - name: OPENSEARCH_URL
+      value: http://opensearch.techx-observability.svc.cluster.local:9200
   checkout:
     useRollout: false
     autoscaling:
@@ -436,16 +423,16 @@ components:
           stabilizationWindowSeconds: 0
           selectPolicy: Max
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 30
+          - type: Pods
+            value: 1
+            periodSeconds: 30
         scaleDown:
           stabilizationWindowSeconds: 300
           selectPolicy: Min
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 60
+          - type: Pods
+            value: 1
+            periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -454,31 +441,30 @@ components:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/component: checkout
-                topologyKey: kubernetes.io/hostname
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: checkout
+              topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: checkout
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: checkout
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: checkout
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: checkout
   payment:
     schedulingRules:
       nodeSelector:
@@ -488,15 +474,15 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: payment
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: payment
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: topology.kubernetes.io/zone
@@ -529,19 +515,19 @@ components:
           stabilizationWindowSeconds: 0
           selectPolicy: Max
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 30
-            - type: Percent
-              value: 100
-              periodSeconds: 30
+          - type: Pods
+            value: 1
+            periodSeconds: 30
+          - type: Percent
+            value: 100
+            periodSeconds: 30
         scaleDown:
           stabilizationWindowSeconds: 300
           selectPolicy: Min
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 60
+          - type: Pods
+            value: 1
+            periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -550,46 +536,42 @@ components:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/component: cart
-                topologyKey: kubernetes.io/hostname
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: cart
+              topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: cart
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: cart
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: cart
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: cart
   load-generator:
     envOverrides:
-      - name: LOCUST_AUTOSTART
-        # Shared UI remains available through Cloudflare, but a pod restart
-        # must not create unowned background traffic.
-        value: "false"
-
+    - name: LOCUST_AUTOSTART
+      value: 'false'
   frontend-proxy:
     envOverrides:
-      - name: FRONTEND_HOST
-        value: frontend-headless
-      - name: GRAFANA_HOST
-        value: grafana.techx-observability.svc.cluster.local
-      - name: JAEGER_HOST
-        value: jaeger.techx-observability.svc.cluster.local
+    - name: FRONTEND_HOST
+      value: frontend-headless
+    - name: GRAFANA_HOST
+      value: grafana.techx-observability.svc.cluster.local
+    - name: JAEGER_HOST
+      value: jaeger.techx-observability.svc.cluster.local
     autoscaling:
       enabled: true
       minReplicas: 2
@@ -600,19 +582,19 @@ components:
           stabilizationWindowSeconds: 0
           selectPolicy: Max
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 30
-            - type: Percent
-              value: 100
-              periodSeconds: 30
+          - type: Pods
+            value: 1
+            periodSeconds: 30
+          - type: Percent
+            value: 100
+            periodSeconds: 30
         scaleDown:
           stabilizationWindowSeconds: 300
           selectPolicy: Min
           policies:
-            - type: Pods
-              value: 1
-              periodSeconds: 60
+          - type: Pods
+            value: 1
+            periodSeconds: 60
     schedulingRules:
       nodeSelector:
         kubernetes.io/arch: arm64
@@ -621,32 +603,30 @@ components:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/component: frontend-proxy
-                topologyKey: kubernetes.io/hostname
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: frontend-proxy
+              topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: frontend-proxy
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: frontend-proxy
-
-  # Stateless AI/recommendation workloads: keep two replicas across ARM64 Spot hosts.
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: frontend-proxy
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: frontend-proxy
   llm:
     replicas: 2
     strategy:
@@ -665,29 +645,28 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: llm
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: llm
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: llm
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: llm
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: llm
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: llm
   recommendation:
     replicas: 2
     strategy:
@@ -706,29 +685,28 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: recommendation
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: recommendation
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: recommendation
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: recommendation
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: recommendation
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: recommendation
   email:
     replicas: 2
     strategy:
@@ -747,51 +725,44 @@ components:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: email
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: email
+            topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: email
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: email
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: email
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: email
   postgresql:
     enabled: false
     command:
-      - docker-entrypoint.sh
-      - postgres
-      - -c
-      - wal_level=logical
-
+    - docker-entrypoint.sh
+    - postgres
+    - -c
+    - wal_level=logical
   kafka:
     enabled: false
-
   valkey-cart:
     enabled: false
-
   product-reviews:
     replicas: 2
     strategy:
       type: RollingUpdate
       rollingUpdate:
-        # Existing replicas still carry the previous required anti-affinity.
-        # Replace one at a time so a node is released before scheduling the
-        # new pod; the PDB retains one serving replica throughout the rollout.
         maxUnavailable: 1
         maxSurge: 0
     podDisruptionBudget:
@@ -804,35 +775,31 @@ components:
         optimization.techx.io/tier: arm64-spot
       affinity:
         podAntiAffinity:
-          # The Spot NodePool is capped at two nodes. A required rule deadlocks
-          # a maxSurge rollout because the third pod has nowhere to schedule.
-          # Prefer host spreading so the steady state remains distributed while
-          # allowing one temporary co-location during a zero-unavailable rollout.
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/component: product-reviews
-                topologyKey: kubernetes.io/hostname
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: product-reviews
+              topologyKey: kubernetes.io/hostname
       tolerations:
-        - key: optimization.techx.io/tier
-          operator: Equal
-          value: arm64-spot
-          effect: NoSchedule
+      - key: optimization.techx.io/tier
+        operator: Equal
+        value: arm64-spot
+        effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: product-reviews
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: product-reviews
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: product-reviews
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: product-reviews
     serviceAccountName: product-reviews-bedrock
     readinessProbe:
       grpc:
@@ -843,69 +810,55 @@ components:
       failureThreshold: 30
       successThreshold: 1
     envOverrides:
-      # Mandate 22 success drill: bounded latency only on review-RPC requests.
-      # The fault expires after 15 minutes or 240 eligible requests. Production
-      # ambient review traffic is about 48 requests/minute, so this remains
-      # bounded while spanning detection, guarded PR merge, and Argo rollout.
-      - name: MANDATE22_REVIEW_DELAY_MS
-        value: "2500"
-      - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
-        value: "900"
-      - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
-        value: "240"
-      - name: AWS_REGION
-        value: us-east-1
-      - name: BEDROCK_MODEL_ID
-        value: us.amazon.nova-2-lite-v1:0
-      - name: BEDROCK_GUARDRAIL_ID
-        value: e2svpiawj1v5
-      - name: BEDROCK_GUARDRAIL_VERSION
-        value: "3"
-      - name: BEDROCK_OUTPUT_MODE
-        value: tool
-      - name: BEDROCK_DEADLINE_SECONDS
-        # Two production smoke requests completed with safe fallback after
-        # about 8 seconds while fault-injection flags were off. Product-QA
-        # performs one provider call, so this adds latency headroom without
-        # increasing the number of billable Bedrock invocations.
-        value: "12"
-      - name: BEDROCK_INPUT_USD_PER_MILLION
-        value: "0.30"
-      - name: BEDROCK_OUTPUT_USD_PER_MILLION
-        value: "2.50"
-      - name: BEDROCK_SYSTEM_CANARY
-        valueFrom:
-          secretKeyRef:
-            name: product-reviews-bedrock-canary
-            key: marker
-      - name: LLM_OBSERVABILITY_HASH_SALT
-        valueFrom:
-          secretKeyRef:
-            name: product-reviews-llm-observability
-            key: hash-salt
-      - name: LLM_OBSERVABILITY_ENABLED
-        value: "true"
-      - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
-        value: "false"
+    - name: AWS_REGION
+      value: us-east-1
+    - name: BEDROCK_MODEL_ID
+      value: us.amazon.nova-2-lite-v1:0
+    - name: BEDROCK_GUARDRAIL_ID
+      value: e2svpiawj1v5
+    - name: BEDROCK_GUARDRAIL_VERSION
+      value: '3'
+    - name: BEDROCK_OUTPUT_MODE
+      value: tool
+    - name: BEDROCK_DEADLINE_SECONDS
+      value: '12'
+    - name: BEDROCK_INPUT_USD_PER_MILLION
+      value: '0.30'
+    - name: BEDROCK_OUTPUT_USD_PER_MILLION
+      value: '2.50'
+    - name: BEDROCK_SYSTEM_CANARY
+      valueFrom:
+        secretKeyRef:
+          name: product-reviews-bedrock-canary
+          key: marker
+    - name: LLM_OBSERVABILITY_HASH_SALT
+      valueFrom:
+        secretKeyRef:
+          name: product-reviews-llm-observability
+          key: hash-salt
+    - name: LLM_OBSERVABILITY_ENABLED
+      value: 'true'
+    - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+      value: 'false'
     securityContext:
       allowPrivilegeEscalation: false
       capabilities:
-        drop: ["ALL"]
+        drop:
+        - ALL
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       runAsUser: 10001
     podSecurityContext:
       seccompProfile:
         type: RuntimeDefault
-
+    podAnnotations:
+      aiops.techx.io/remediation-id: inc-a08822d4171d
 rollouts:
   enabled: true
-
-bastionPortalAccess: { enabled: true }
-
+bastionPortalAccess:
+  enabled: true
 postgresqlMigrationBridge:
   enabled: false
-
 managedData:
   enabled: true
   postgresql:
@@ -917,21 +870,14 @@ managedData:
   kafka:
     enabled: true
     secretName: msk-kafka-secret
-    # CDO08-REL-17: complete Kafka/MSK app cutover. checkout is the producer;
-    # accounting and fraud-detection are consumers that must read from MSK before
-    # the self-hosted kafka pod can be decommissioned.
-    services: [checkout, accounting, fraud-detection]
-
-# CDO08-REL-17: start Kafka self-hosted -> MSK live replication with Strimzi MirrorMaker2.
-# This does not cut over checkout/accounting/fraud-detection traffic.
+    services:
+    - checkout
+    - accounting
+    - fraud-detection
 mirrormaker2:
   enabled: false
   version: 4.2.1
   targetCluster:
-    bootstrapServers: "b-2.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096,b-1.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096"
-
+    bootstrapServers: b-2.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096,b-1.techxtf4orders.5n1354.c2.kafka.us-east-1.amazonaws.com:9096
 valkeyMigrationBridge:
-  # CDO08-REL-16 BƯỚC 3.8: migration completed and cutover confirmed stable on
-  # ElastiCache - the replication link is already severed by complete-migration,
-  # so this bridge no longer serves any purpose. Disabled per 08-cleanup.sh.
   enabled: false
