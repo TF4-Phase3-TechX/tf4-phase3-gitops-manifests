@@ -56,6 +56,8 @@ spec:
       kind: CustomResourceDefinition
       jqPathExpressions:
         - '.spec.conversion | select(.strategy == "None")'
+        - '.metadata.labels | select(length == 0)'
+        - '.metadata.annotations | select(length == 0)'
   syncPolicy:
     automated:
       prune: false
