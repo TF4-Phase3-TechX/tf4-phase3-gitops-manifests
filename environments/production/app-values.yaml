@@ -843,6 +843,14 @@ components:
       failureThreshold: 30
       successThreshold: 1
     envOverrides:
+      # Mandate 22 success drill: bounded latency only on review-RPC requests.
+      # The fault expires after 15 minutes or 60 eligible requests.
+      - name: MANDATE22_REVIEW_DELAY_MS
+        value: "2500"
+      - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
+        value: "900"
+      - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
+        value: "60"
       - name: AWS_REGION
         value: us-east-1
       - name: BEDROCK_MODEL_ID
