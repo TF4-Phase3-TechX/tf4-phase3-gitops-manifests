@@ -1,0 +1,54 @@
+owner: CDO
+account: "511825856493"
+timeboxedDemoException:
+  owner: Nam
+  reason: missing-org-app-manager-and-time-boxed-demo
+  creatorLogin: c0mmie-b0msh3ll
+  reviewerLogin: tdinhthong127
+  expiresAt: "2026-08-01T16:59:59Z"
+  claimBoundary: assisted-two-account-scripted-demo-not-cdo-autonomous
+repositorySettings:
+  allowAutoMerge: true
+githubApp:
+  slug: gitops-promotion-bot-tf4
+  actorId: 4301466
+  reusePolicy: cdo_owned_gitops_automation_only
+  repositorySelection:
+    - TF4-Phase3-TechX/tf4-phase3-gitops-manifests
+  permissions:
+    metadata: read
+    contents: write
+    pullRequests: write
+    checks: read
+  explicitlyDenied:
+    - administration
+    - actions
+    - secrets
+rulesets:
+  - name: aiops-required-checks
+    target: branch
+    include: [main]
+    directPush: prohibited
+    requiredChecks:
+      - validate
+      - check-pinned-dependencies
+      - aiops-remediation-policy
+    githubAppBypass: false
+  - name: aiops-pr-review
+    target: branch
+    include: [main]
+    pullRequestRequired: true
+    requiredApprovals: 1
+    dismissStaleReviewsOnPush: true
+    requireReviewThreadResolution: true
+    reviewBypass:
+      githubApp: gitops-promotion-bot-tf4
+      scope: pull_request_only
+secretDelivery:
+  provider: aws-secrets-manager
+  remoteKey: techx/tf4/aiops-github-app
+  externalResource: aiops-github-app
+  mountPath: /var/run/secrets/github-app
+egress:
+  connectProxy: aiops-github-proxy
+  allowedAuthority: api.github.com:443
