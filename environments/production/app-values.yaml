@@ -230,19 +230,18 @@ components:
         value: arm64-spot
         effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: shipping
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: shipping
-
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: shipping
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: shipping
   product-catalog:
     autoscaling:
       enabled: true
@@ -484,25 +483,18 @@ components:
         value: arm64-spot
         effect: NoSchedule
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: payment
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: payment
-
-  # CDO08-REL-16 Blue-Green cutover window is over; useRollout reverted to the
-  # chart default (false, plain Deployment/RollingUpdate) — same rationale as
-  # checkout above.
-  # CDO08-SEC-13/REL-16: endpoint/TLS/password now come from
-  # elasticache-valkey-secret through managedData.valkey below, not plaintext
-  # envOverrides.
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: payment
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: payment
   cart:
     useRollout: false
     autoscaling:
@@ -812,12 +804,6 @@ components:
       failureThreshold: 30
       successThreshold: 1
     envOverrides:
-    - name: MANDATE22_REVIEW_DELAY_MS
-      value: '2600'
-    - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
-      value: '900'
-    - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
-      value: '200'
     - name: AWS_REGION
       value: us-east-1
     - name: BEDROCK_MODEL_ID
@@ -860,7 +846,7 @@ components:
       seccompProfile:
         type: RuntimeDefault
     podAnnotations:
-      aiops.techx.io/remediation-id: inc-a08822d4171d
+      aiops.techx.io/remediation-id: inc-d323869f6990
 rollouts:
   enabled: true
 bastionPortalAccess:
