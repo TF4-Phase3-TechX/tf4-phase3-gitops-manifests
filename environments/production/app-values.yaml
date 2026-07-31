@@ -566,6 +566,8 @@ components:
       value: 'false'
   frontend-proxy:
     envOverrides:
+    - name: ENVOY_LOCAL_RL_ENFORCED_PERCENT
+      value: '0'
     - name: FRONTEND_HOST
       value: frontend-headless
     - name: GRAFANA_HOST
