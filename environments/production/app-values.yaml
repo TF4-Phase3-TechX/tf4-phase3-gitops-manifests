@@ -804,6 +804,12 @@ components:
       failureThreshold: 30
       successThreshold: 1
     envOverrides:
+    - name: MANDATE22_REVIEW_DELAY_MS
+      value: '2600'
+    - name: MANDATE22_REVIEW_DELAY_TTL_SECONDS
+      value: '900'
+    - name: MANDATE22_REVIEW_DELAY_MAX_REQUESTS
+      value: '200'
     - name: AWS_REGION
       value: us-east-1
     - name: BEDROCK_MODEL_ID
@@ -846,7 +852,7 @@ components:
       seccompProfile:
         type: RuntimeDefault
     podAnnotations:
-      aiops.techx.io/remediation-id: inc-7acc6c1362f9
+      aiops.techx.io/remediation-id: inc-d323869f6990
 rollouts:
   enabled: true
 bastionPortalAccess:
